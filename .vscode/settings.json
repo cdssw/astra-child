@@ -1,0 +1,15 @@
+{
+  "intelephense.stubs": [
+    "apache","bcmath","bz2","calendar","Core","curl","date","dom","filter","ftp","gd","gettext",
+    "hash","iconv","imap","intl","json","libxml","mbstring","mysqli","mysqlnd","openssl","pcre",
+    "PDO","pdo_mysql","posix","readline","Reflection","session","SimpleXML","SPL","standard",
+    "tokenizer","xml","xmlreader","xmlwriter","zip","zlib","wordpress"
+  ],
+  "intelephense.diagnostics.undefinedFunctions": false,
+  "intelephense.diagnostics.undefinedConstants": false,
+  "intelephense.diagnostics.undefinedMethods": false,
+  "intelephense.environment.phpVersion": "8.2",
+  "editor.formatOnSave": true,
+  "files.eol": "\n",
+  "editor.tabSize": 2
+}
