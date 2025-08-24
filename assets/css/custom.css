@@ -1,0 +1,99 @@
+:root {
+  --brand: #2563eb;   /* 포인트 색 */
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --bg-soft: #f8fafc;
+}
+
+body { font-size: 16.5px; line-height: 1.75; color: var(--text); }
+.entry-content p { margin: 0 0 1.1em; }
+.entry-content > h2, .entry-content > h3 { margin-top: 1.6em; }
+
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+h1 { font-size: clamp(24px, 2.4vw, 32px); line-height: 1.25; }
+h2 { font-size: clamp(20px, 2vw, 26px); line-height: 1.3; }
+h3 { font-size: clamp(18px, 1.8vw, 22px); line-height: 1.35; }
+
+.ast-container { max-width: 1200px; }
+.single .site-content .entry-content { max-width: 720px; margin: 0 auto; }
+.single .entry-meta { color: var(--muted); font-size: 13px; }
+
+.entry-content img, .post-thumb img, .wp-block-image img {
+  max-width: 100%; height: auto; border-radius: 10px;
+}
+figure { margin: 0 0 1.2em; }
+
+.button, .wp-block-button__link, .ast-button {
+  background: var(--brand); color: #fff; border: none;
+  border-radius: 8px; padding: 10px 14px;
+}
+.button:hover, .wp-block-button__link:hover, .ast-button:hover { opacity: .9; }
+
+.entry-content table {
+  width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: .95em;
+}
+.entry-content th, .entry-content td { border: 1px solid var(--border); padding: 10px; }
+.entry-content thead th { background: var(--bg-soft); }
+
+.blog .ast-row, .archive .ast-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.blog .ast-row article, .archive .ast-row article {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15,23,42,.04);
+}
+.blog .ast-row article .post-thumb img,
+.archive .ast-row article .post-thumb img {
+  width: 100%; height: 180px; object-fit: cover;
+}
+.blog .ast-row .entry-header, .archive .ast-row .entry-header { padding: 14px 16px 0; }
+.blog .ast-row .entry-content, .archive .ast-row .entry-content { padding: 8px 16px 16px; }
+.blog .ast-row .entry-title a, .archive .ast-row .entry-title a { color: var(--text); }
+.blog .ast-row .entry-meta, .archive .ast-row .entry-meta { color: var(--muted); font-size: 12.5px; }
+
+.ast-header-break-point .main-header-bar { padding-top: 6px; padding-bottom: 6px; }
+.ast-mobile-popup-drawer .menu-item a { padding: 12px 0; }
+
+/* 오프캔버스 내부 여백/닫기 버튼 정렬 */
+.ast-mobile-popup-inner { padding: 14px 18px; }
+.ast-mobile-popup-header .menu-toggle-close { margin-left: auto; }
+
+/* 필요 시 모바일에서만 글자 크기 살짝 키우기 */
+@media (max-width: 544px) {
+  body { font-size: 15.8px; line-height: 1.78; }
+  .blog .ast-row .entry-content, .archive .ast-row .entry-content { padding: 10px 14px 14px; }
+}
+
+.site-footer { background: #0b1220; color: #cbd5e1; }
+.site-footer a { color: #e2e8f0; }
+.site-footer a:hover { color: #ffffff; }
+
+.ad-slot {
+  min-height: 280px;
+  background: #f5f7fa;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: #64748b; font-size: 14px;
+}
+
+.mt-0{margin-top:0!important}.mt-1{margin-top:6px!important}.mt-2{margin-top:12px!important}.mt-3{margin-top:18px!important}
+.mb-0{margin-bottom:0!important}.mb-1{margin-bottom:6px!important}.mb-2{margin-bottom:12px!important}.mb-3{margin-bottom:18px!important}
+
+.ast-mobile-popup-inner .menu-item.hide-on-mobile { display: none !important; }
+
+.card-badges { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 0; }
+.badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 8px; border-radius:999px; font-size:12px;
+  background:#eef2ff; color:#3730a3;
+}
+.badge.theme { background:#ecfeff; color:#155e75; }
+.badge i { width:14px; height:14px; display:inline-block; }
