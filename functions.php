@@ -104,19 +104,6 @@ add_action('pre_get_posts', function ($q) {
   $q->set('posts_per_page', 12);
 });
 
-/* 본문 첫 단락 뒤 광고(플레이스홀더) 자동 삽입: post, campground */
-add_filter('the_content', function ($content) {
-  if (is_admin()) return $content;
-  if (!is_singular(array('post', 'campground'))) return $content;
-
-  $placeholder = '<div class="ad-slot">광고 자리(본문 1단락 뒤)</div>';
-  $p = strpos($content, '</p>');
-  if ($p !== false) {
-    return substr($content, 0, $p + 4) . $placeholder . substr($content, $p + 4);
-  }
-  return $content . $placeholder;
-}, 20);
-
 /* 단일 캠핑장 JSON-LD 출력 */
 add_action('wp_head', function () {
   if (!is_singular('campground')) return;
@@ -173,3 +160,9 @@ add_action('wp_enqueue_scripts', function () {
 //   $args['fallback_cb'] = '__return_false';
 //   return $args;
 // });
+
+// 캠핑장 단일 페이지에서 Astra 기본 제목 숨기기
+add_filter('astra_the_title_enabled', function ($enabled) {
+  if (is_singular('campground')) return false;
+  return $enabled;
+});

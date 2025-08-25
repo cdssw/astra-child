@@ -1,27 +1,23 @@
 /* =========================================================
-   Astra Child - custom.css
-   목적: 다크 테마, 아카이브(가로 필터 + 무썸네일 리스트),
-        본문/푸터 흰 띠 제거, 데스크톱 상단 간격(993px) 축소
+   Astra Child - custom.css (정리본)
+   - 다크 테마 일원화
+   - 아카이브(가로 필터 + 무썸네일 리스트)
+   - 단일 상세(cg-detail) 레이아웃
+   - 폼 컨트롤 다크 / 데스크톱(≥993px) 상단 간격 축소
    ========================================================= */
 
-/* ========== 0) 다크 팔레트 ========== */
+/* 0) 팔레트 + 폼 컨트롤 다크 */
 :root {
-  --brand: #60a5fa;  /* 포인트 */
-  --text:  #e5e7eb;  /* 기본 텍스트 */
-  --muted: #9ca3af;  /* 보조 텍스트 */
-  --border:#1f2937;  /* 경계선 */
-  --panel: #0f172a;  /* 카드/패널 배경 */
-  --bg:    #0b1220;  /* 전체 배경 */
+  --brand:#60a5fa; --text:#e5e7eb; --muted:#9ca3af;
+  --border:#1f2937; --panel:#0f172a; --bg:#0b1220;
+  color-scheme: dark;
 }
+input, select, textarea, button { color-scheme: dark; }
 
-/* ========== 1) 전체 배경/텍스트 ========== */
-html, body, #page,
-.site, .site-content, .content-area, .site-main {
-  background: var(--bg) !important;
-  color: var(--text);
+/* 1) 전체 배경/텍스트 + 흰 띠 제거 */
+html, body, #page, .site, .site-content, .content-area, .site-main {
+  background: var(--bg) !important; color: var(--text);
 }
-
-/* Separate Container 계열의 밝은 배경/그림자 제거 */
 .ast-separate-container .site-content,
 .ast-separate-container .ast-container,
 .ast-separate-container .site-main > .ast-row,
@@ -32,223 +28,222 @@ html, body, #page,
 .ast-separate-container .ast-archive-description,
 .ast-separate-container .ast-article-post,
 .ast-separate-container .ast-article-single {
-  background: var(--bg) !important;
-  box-shadow: none !important;
-  border: 0 !important;
+  background: var(--bg) !important; box-shadow:none !important; border:0 !important;
 }
-
-/* 본문 하단 여백으로 보이는 흰 줄 제거 */
 .ast-separate-container .site-main > .ast-row,
-.ast-separate-container .site-content .ast-container {
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
-body { margin-bottom: 0 !important; }
+.ast-separate-container .site-content .ast-container { padding-bottom:0 !important; margin-bottom:0 !important; }
+body { margin-bottom:0 !important; }
 
-/* ========== 2) 헤더/푸터(다크) ========== */
-.main-header-bar,
-.ast-mobile-popup-drawer {
-  background: #0c1426 !important;
-}
-.site-title, .site-title a, .site-branding .site-title a {
-  color: #e6edf7 !important;
-}
-.ast-builder-menu-1 .menu-item > a {
-  color: #e6edf7 !important;
-  opacity: 1 !important;
-}
+/* 2) 헤더/푸터(다크) */
+.main-header-bar, .ast-mobile-popup-drawer { background:#0c1426 !important; }
+.site-title, .site-title a, .site-branding .site-title a { color:#e6edf7 !important; }
+.ast-builder-menu-1 .menu-item > a { color:#e6edf7 !important; opacity:1 !important; }
 .ast-builder-menu-1 .menu-item > a:hover,
 .ast-desktop .ast-builder-menu-1 .current-menu-item > a,
-.ast-mobile-popup-drawer .menu-item > a:hover {
-  color: #ffffff !important;
+.ast-mobile-popup-drawer .menu-item > a:hover { color:#fff !important; }
+.site-footer, .site-primary-footer-wrap, .ast-small-footer,
+.site-footer .ast-container, .ast-footer-separate-container, .ast-footer-overlay,
+.ast-builder-grid-row-container, .ast-builder-grid-row-container-inner {
+  background:#0c1426 !important; color:#c9d1d9 !important; box-shadow:none !important; border:0 !important;
 }
-
-.site-footer,
-.site-primary-footer-wrap,
-.ast-small-footer,
-.site-footer .ast-container,
-.ast-footer-separate-container,
-.ast-footer-overlay,
-.ast-builder-grid-row-container,
-.ast-builder-grid-row-container-inner {
-  background: #0c1426 !important;
-  color: #c9d1d9 !important;
-  box-shadow: none !important;
-  border: 0 !important;
-}
-
-/* 푸터 위 흰 선 제거 */
-.site-primary-footer-wrap,
-.ast-small-footer { border-top: 0 !important; }
+.site-primary-footer-wrap, .ast-small-footer { border-top:0 !important; }
 .site-footer:before, .site-footer:after,
 .site-primary-footer-wrap:before, .site-primary-footer-wrap:after,
-.ast-small-footer:before, .ast-small-footer:after {
-  content: none !important;
-}
+.ast-small-footer:before, .ast-small-footer:after { content:none !important; }
 
-/* ========== 3) 타이포/링크/버튼/입력 ========== */
-a { color: var(--brand); text-decoration: none; }
-a:hover { text-decoration: underline; }
-:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
-
-h1 { font-size: clamp(22px, 2.1vw, 28px); line-height: 1.25; }
-h2 { font-size: clamp(18px, 1.8vw, 22px); line-height: 1.3; }
-h3 { font-size: clamp(16px, 1.6vw, 20px); line-height: 1.35; }
-
-.button, .wp-block-button__link, .ast-button {
-  background: var(--brand);
-  color: #06121f;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 600;
-}
-.button:hover, .wp-block-button__link:hover, .ast-button:hover { opacity: .92; }
-
+/* 3) 타이포/링크/버튼/입력 */
+a { color:var(--brand); text-decoration:none; }
+a:hover { text-decoration:underline; }
+:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+h1 { font-size:clamp(22px,2.1vw,28px); line-height:1.25; }
+h2 { font-size:clamp(18px,1.8vw,22px); line-height:1.3; }
+h3 { font-size:clamp(16px,1.6vw,20px); line-height:1.35; }
 select, input[type="text"], input[type="search"] {
-  background: #0b162b;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  background:#0b162b; color:var(--text); border:1px solid var(--border); border-radius:10px;
 }
 select:focus, input[type="text"]:focus, input[type="search"]:focus {
-  border-color: #2b3b53;
-  box-shadow: 0 0 0 2px rgba(96,165,250,.15);
+  border-color:#2b3b53; box-shadow:0 0 0 2px rgba(96,165,250,.15);
 }
-
-/* 접근성 스킵 링크: 포커스시에만 보이기 */
-.ast-skip-link, .skip-link {
-  position: absolute !important; left: -9999px !important; top: auto !important;
-  width: 1px !important; height: 1px !important; overflow: hidden !important;
-}
+/* 스킵 링크: 포커스시에만 */
+.ast-skip-link, .skip-link { position:absolute !important; left:-9999px !important; width:1px !important; height:1px !important; overflow:hidden !important; }
 .ast-skip-link:focus, .skip-link:focus {
-  left: 8px !important; top: 8px !important;
-  width: auto !important; height: auto !important;
-  padding: 8px 10px !important;
-  background: #0ea5e9 !important; color: #06121f !important;
-  border-radius: 8px !important; z-index: 100000 !important;
+  left:8px !important; top:8px !important; width:auto !important; height:auto !important;
+  padding:8px 10px !important; background:#0ea5e9 !important; color:#06121f !important; border-radius:8px !important; z-index:100000 !important;
 }
 
-/* ========== 4) 캠핑장 아카이브 페이지 ========== */
-/* 페이지 타이틀 */
-.post-type-archive-campground .page-header { width: 100%; margin: 10px 0 16px; }
-.post-type-archive-campground .page-title {
-  color: #e6edf7 !important; opacity: 1 !important; margin: 0 0 8px;
-}
-.ast-archive-description { background: transparent !important; padding: 8px 0 0 !important; border: 0 !important; }
+/* 4) 아카이브(캠핑장 목록) */
+.post-type-archive-campground .page-header { width:100%; margin:10px 0 16px; }
+.post-type-archive-campground .page-title { color:#e6edf7 !important; opacity:1 !important; margin:0 0 8px; }
+.ast-archive-description { background:transparent !important; padding:8px 0 0 !important; border:0 !important; }
 
-/* 가로형 필터(2 셀렉트 + 버튼 그룹) */
+/* 필터 바 */
 .post-type-archive-campground .camp-filter {
-  display: grid;
-  grid-template-columns: minmax(220px,1fr) minmax(220px,1fr) auto;
-  gap: 10px; align-items: center;
-  width: 100%; box-sizing: border-box;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-  padding: 12px; margin: 8px 0 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.35);
-  overflow: visible; /* 셀렉트 팝업 잘림 방지 */
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) minmax(220px,1fr) auto;
+  gap:10px; align-items:center; width:100%; box-sizing:border-box;
+  background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:12px; margin:8px 0 18px; box-shadow:0 2px 8px rgba(0,0,0,.35); overflow:visible;
 }
-.post-type-archive-campground .camp-filter select {
-  height: 40px; line-height: 40px; font-size: 14.5px;
-  padding: 0 36px 0 12px; border-radius: 10px;
-  -webkit-appearance: none; -moz-appearance: none; appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'><path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-  background-repeat: no-repeat; background-position: right 10px center; background-size: 14px;
+.post-type-archive-campground .camp-filter select,
+.post-type-archive-campground .camp-filter select:hover,
+.post-type-archive-campground .camp-filter select:focus,
+.post-type-archive-campground .camp-filter select:focus-visible {
+  height:40px; line-height:40px; font-size:14.5px;
+  padding:0 36px 0 12px; border-radius:10px; background:#0b162b !important; color:#e5e7eb !important; border-color:#2b3b53 !important;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'><path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat; background-position:right 10px center; background-size:14px;
 }
-.post-type-archive-campground .camp-filter .filter-actions {
-  display: flex; gap: 8px; justify-content: flex-end; align-items: center;
-}
-.post-type-archive-campground .camp-filter .btn-primary { height: 40px; padding: 0 14px; border-radius: 10px; }
-.post-type-archive-campground .camp-filter .btn-ghost {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 40px; padding: 0 12px; border-radius: 10px;
-  border: 1px solid var(--border); color: #cbd5e1; background: transparent; text-decoration: none;
-}
-.post-type-archive-campground .camp-filter .btn-ghost:hover {
-  border-color: #3b4a63; background: rgba(255,255,255,.03); color: #ffffff;
-}
+.post-type-archive-campground .camp-filter select option { background:#0b162b; color:#e5e7eb; }
+.post-type-archive-campground .camp-filter .filter-actions { display:flex; gap:8px; justify-content:flex-end; align-items:center; }
+.post-type-archive-campground .camp-filter .btn-primary { height:40px; padding:0 14px; border-radius:10px; }
 
-/* 목록 컨테이너 */
-.post-type-archive-campground .ast-row { display: block; clear: both; }
-
-/* 무썸네일 카드 */
-.post-type-archive-campground .camp-item.no-thumb {
-  display: block;
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px 18px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.25);
-  color: #e5e7eb;
+/* 목록 컨테이너/카드 */
+.post-type-archive-campground .ast-row { display:block; clear:both; }
+.post-type-archive-campground article.camp-item.no-thumb {
+  background:var(--panel) !important; border:1px solid #2b3b53 !important; border-radius:12px !important;
+  padding:16px 18px; box-shadow:0 1px 2px rgba(0,0,0,.28) !important; color:#e5e7eb;
 }
-.post-type-archive-campground .camp-item.no-thumb + .camp-item.no-thumb { margin-top: 12px; }
-.post-type-archive-campground .camp-item.no-thumb .entry-title a { color: #e6edf7; }
-.post-type-archive-campground .camp-item.no-thumb .entry-title a:hover { color: #ffffff; }
+.post-type-archive-campground article.camp-item.no-thumb + article.camp-item.no-thumb { margin-top:12px; }
+.post-type-archive-campground .camp-item.no-thumb .entry-title a { color:#e6edf7; }
+.post-type-archive-campground .camp-item.no-thumb .entry-title a:hover { color:#fff; }
 .post-type-archive-campground .camp-item.no-thumb .entry-content,
-.post-type-archive-campground .camp-item.no-thumb .entry-meta { display: none; }
+.post-type-archive-campground .camp-item.no-thumb .entry-meta { display:none; }
 
 /* 뱃지 */
-.post-type-archive-campground .card-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.post-type-archive-campground .card-badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .post-type-archive-campground .badge {
-  display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px;
-  background: #111c33; color: #c7d2fe; border: 1px solid #243454;
+  display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; font-size:12px;
+  background:#111c33; color:#c7d2fe; border:1px solid #243454;
 }
-.post-type-archive-campground .badge.theme { background: #0f1f1f; color: #99f6e4; border-color: #1e3a3a; }
+.post-type-archive-campground .badge.theme { background:#0f1f1f; color:#99f6e4; border-color:#1e3a3a; }
 
-/* ========== 5) 데스크톱(≥ 993px) 상단 간격 확 줄이기 ========== */
-/* Astra 기본: @media (min-width: 993px){ #primary 등에 padding-top: 4em } → 덮어쓰기 */
-@media (min-width: 993px) {
-  /* site-main 자체 상단 패딩 축소(핵심) */
-  body.post-type-archive-campground main#primary.site-main {
-    padding-top: 8px !important;  /* 필요 시 0~12px로 조정 */
-  }
-
-  /* Separate Container 상단 패딩도 축소(보조) */
-  body.post-type-archive-campground.ast-separate-container .site-content .ast-container {
-    padding-top: 12px !important;
-  }
-
-  /* #primary 상단 패딩을 직접 덮어쓰기(4em → 8px) */
+/* 데스크톱(≥993px) 상단 간격 축소 */
+@media (min-width:993px){
+  body.post-type-archive-campground main#primary.site-main { padding-top:8px !important; }
+  body.post-type-archive-campground.ast-separate-container .site-content .ast-container { padding-top:12px !important; }
   .ast-separate-container #primary,
   .ast-separate-container.ast-left-sidebar #primary,
-  .ast-separate-container.ast-right-sidebar #primary {
-    padding-top: 8px !important;
-    margin-top: 0 !important;
-  }
-
-  /* 페이지 헤더/필터 바 여백도 컴팩트 */
-  .post-type-archive-campground .page-header { margin-top: 6px !important; margin-bottom: 10px !important; }
-  .post-type-archive-campground .camp-filter { margin-top: 6px !important; margin-bottom: 12px !important; }
-
-  /* 투명 헤더 사용 시 보정값 제거(선택) */
-  body.ast-transparent-header.post-type-archive-campground .site-content { padding-top: 0 !important; }
+  .ast-separate-container.ast-right-sidebar #primary { padding-top:8px !important; margin-top:0 !important; }
+  .post-type-archive-campground .page-header { margin-top:6px !important; margin-bottom:10px !important; }
+  .post-type-archive-campground .camp-filter { margin-top:6px !important; margin-bottom:12px !important; }
 }
 
-/* ========== 6) 모바일(≤ 640px) 최적화 ========== */
-@media (max-width: 640px) {
-  .post-type-archive-campground .camp-filter { grid-template-columns: 1fr; }
+/* 5) 단일 상세(cg-detail) — 제목/버튼 한 줄, 우측 버튼 */
+.cg-detail .hd { display:grid; gap:6px; margin-bottom:8px; }
+.cg-detail .hd-row {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.cg-detail .title { margin:0 !important; line-height:1.2; }
+.cg-detail .loc { font-size:13.5px; color:var(--muted); }
+.cg-detail .loc strong { color:#cfd6e4; font-weight:600; }
+
+/* 상세 뱃지 */
+.cg-detail .badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.cg-detail .badge {
+  display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; font-size:12px;
+  border:1px solid #243454; background:#111c33; color:#c7d2fe;
+}
+.cg-detail .badge.theme { background:#0f1f1f; color:#99f6e4; border-color:#1e3a3a; }
+.cg-detail .badge.ok { background:#0f2a19; border-color:#1f4a33; color:#9ef0c2; }
+.cg-detail .badge.no { background:#2a1717; border-color:#4a2a2a; color:#f5b1b1; }
+.cg-detail .badge.type-auto::before{content:"🚗 ";font-size:12px}
+.cg-detail .badge.type-general::before{content:"🏕️ ";font-size:12px}
+.cg-detail .badge.type-glamp::before{content:"🛖 ";font-size:12px}
+.cg-detail .badge.type-caravan::before{content:"🚐 ";font-size:12px}
+
+/* 상세 KPI */
+.cg-detail .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:6px; margin:8px 0 12px; }
+.cg-detail .kpi { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center; }
+.cg-detail .kpi .k { color:#a9b3c4; font-size:12px; }
+cg-detail .kpi .v { color:#e6edf7; font-weight:700; margin-top:4px; } /* 오타 방지: cg-detail 확인 */
+
+/* 상세 핵심정보(사양) */
+.cg-detail .info { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; margin:0 0 12px; }
+.cg-detail .info h2, .cg-detail .sites h2 { font-size:18px; color:#cfd6e4; margin:0 0 10px; }
+.cg-detail .spec {
+  list-style:none; padding:0; margin:0;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:8px;
+}
+.cg-detail .spec li { display:flex; gap:10px; align-items:flex-start; border:1px solid #243454; border-radius:10px; padding:10px; background:#0e1729; }
+.cg-detail .spec .k { min-width:86px; color:#cbd5e1; font-weight:600; }
+.cg-detail .spec .v { color:#e5e7eb; }
+
+/* 상세 사이트 표 */
+.cg-detail .sites { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; }
+.cg-detail .sites .tbl-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:10px; }
+.cg-detail .sites .tbl { width:100%; border-collapse:collapse; min-width:600px; }
+.cg-detail .sites .tbl th, .cg-detail .sites .tbl td { border:1px solid #243454; padding:10px; font-size:14px; }
+.cg-detail .sites .tbl thead th { background:#101a2e; color:#cfd6e4; }
+.cg-detail .note { color:#9aa6bb; font-size:12.5px; margin-top:8px; }
+
+/* 상세 본문 텍스트 */
+.cg-detail .content { color:#e5e7eb; font-size:15.8px; line-height:1.78; margin:12px 0; }
+.cg-detail .content a { color:var(--brand); }
+
+/* 상세 상단 버튼(목록으로) — 링크 스타일 덮기 */
+.cg-detail .btn-ghost {
+  display:inline-flex; align-items:center; justify-content:center;
+  height:32px; padding:0 12px; font-size:13px; border-radius:10px;
+  border:1px solid #2b3b53; background:transparent; color:#cbd5e1;
+  text-decoration:none !important;
+  transition:border-color .15s, background-color .15s, color .15s;
+}
+.cg-detail .btn-ghost:hover { border-color:#3b4a63; background:rgba(255,255,255,.03); color:#fff; }
+.cg-detail .btn-ghost:focus-visible { outline:2px solid var(--brand); outline-offset:2px; border-color:var(--brand); }
+
+/* 모바일 타이틀 줄바꿈 시 버튼 우측 유지 */
+@media (max-width:640px){
+  .cg-detail .hd-row { flex-wrap:wrap; }
+  .cg-detail .hd-row .btn-ghost { margin-left:auto; }
 }
 
-/* 캠핑장 목록 카드: 테두리/그림자 복구 + 대비 강화 */
-.post-type-archive-campground article.camp-item.no-thumb {
-  background: var(--panel) !important;
-  border: 1px solid #2b3b53 !important;   /* 기존 var(--border)보다 한 톤 밝게 */
-  border-radius: 12px !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,.28) !important;
+/* 1) 본문 제목 행: 제목–버튼 한 줄 수직 중앙(필수) */
+.cg-detail .hd-row{
+  display:flex;
+  align-items:center;          /* 수직 중앙 정렬 */
+  justify-content:space-between;
+  gap:10px;
 }
-.post-type-archive-campground article.camp-item.no-thumb:hover {
-  border-color: #3b4a63 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,.38) !important;
+/* 제목 기본 여백/줄간격 보정 */
+.cg-detail .title{
+  margin:0 !important;
+  line-height:1.2;
+  color:#e6edf7;
+}
+/* 버튼이 살짝 위로 보일 때 1px만 내려 균형(필요 시 주석 해제) */
+/* .cg-detail .hd-row .btn-ghost{ transform: translateY(1px); } */
+
+/* (오탈자 보정) KPI 값 셀렉터: .cg-detail 누락 시 일부 브라우저에서 다음 규칙 적용 누락 */
+.cg-detail .kpi .v{ color:#e6edf7; font-weight:700; margin-top:4px; }
+
+/* 2) 인근 캠핑장 섹션 복구(카드형 링크) */
+.single-campground .section-title{
+  font-size:17px; line-height:1.35;
+  margin:16px 0 10px; color:#cfd6e4;
+}
+.single-campground .related-camps{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:10px;
+}
+.single-campground .related-card,
+.single-campground .related-card:link,
+.single-campground .related-card:visited{
+  display:block; text-decoration:none !important;
+  background:#0f172a; border:1px solid #2b3b53; border-radius:12px;
+  padding:12px; color:#e6edf7 !important;
+  transition:border-color .15s ease, box-shadow .15s ease, color .15s ease;
+}
+.single-campground .related-card:hover{
+  border-color:#3b4a63; box-shadow:0 6px 16px rgba(0,0,0,.32); color:#ffffff !important;
+}
+.single-campground .related-card .title{
+  margin:0; font-size:15.5px; line-height:1.5; color:#dbe4f3;
 }
 
-/* 필터 바 테두리도 동일 톤으로 고정 */
-.post-type-archive-campground .camp-filter {
-  border: 1px solid #2b3b53 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,.35) !important;
+/* note 하단 여백 제거(상단만 6px 유지) */
+.cg-detail .sites .note {
+  margin: 6px 0 0 !important; /* top right/left bottom */
+  line-height: 1.5;
 }
 
-/* 혹시 상위에서 article에 border:0 !important가 있다면 무력화 */
-.post-type-archive-campground .ast-row article.camp-item {
-  border-width: 1px !important;
-  border-style: solid !important;
-  border-color: #2b3b53 !important;
-  border-radius: 12px !important;
-}
