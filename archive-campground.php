@@ -21,38 +21,42 @@ get_header(); ?>
       ?>
 
       <label for="filter-region" class="screen-reader-text">지역 선택</label>
-      <select id="filter-region" name="region">
-        <option value="">지역 전체</option>
-        <?php
-        if (!is_wp_error($regions) && $regions) {
-          foreach ($regions as $t) {
-            printf(
-              '<option value="%s"%s>%s</option>',
-              esc_attr($t->slug),
-              selected($cur_r, $t->slug, false),
-              esc_html($t->name)
-            );
+      <div class="sel">
+        <select id="filter-region" name="region">
+          <option value="">지역 전체</option>
+          <?php
+          if (!is_wp_error($regions) && $regions) {
+            foreach ($regions as $t) {
+              printf(
+                '<option value="%s"%s>%s</option>',
+                esc_attr($t->slug),
+                selected($cur_r, $t->slug, false),
+                esc_html($t->name)
+              );
+            }
           }
-        }
-        ?>
-      </select>
+          ?>
+        </select>
+      </div>
 
       <label for="filter-theme" class="screen-reader-text">테마 선택</label>
-      <select id="filter-theme" name="camp_theme">
-        <option value="">테마 전체</option>
-        <?php
-        if (!is_wp_error($themes) && $themes) {
-          foreach ($themes as $t) {
-            printf(
-              '<option value="%s"%s>%s</option>',
-              esc_attr($t->slug),
-              selected($cur_t, $t->slug, false),
-              esc_html($t->name)
-            );
+      <div class="sel">
+        <select id="filter-theme" name="camp_theme">
+          <option value="">테마 전체</option>
+          <?php
+          if (!is_wp_error($themes) && $themes) {
+            foreach ($themes as $t) {
+              printf(
+                '<option value="%s"%s>%s</option>',
+                esc_attr($t->slug),
+                selected($cur_t, $t->slug, false),
+                esc_html($t->name)
+              );
+            }
           }
-        }
-        ?>
-      </select>
+          ?>
+        </select>
+      </div>
 
       <div class="filter-actions">
         <button type="submit" class="ast-button btn-primary">필터 적용</button>

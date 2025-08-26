@@ -166,3 +166,9 @@ add_filter('astra_the_title_enabled', function ($enabled) {
   if (is_singular('campground')) return false;
   return $enabled;
 });
+
+// 프론트 페이지(홈)에서 Astra 기본 제목 숨김
+add_filter('astra_the_title_enabled', function ($enabled) {
+  if (is_front_page()) return false;
+  return $enabled;
+});

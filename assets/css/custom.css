@@ -247,3 +247,253 @@ cg-detail .kpi .v { color:#e6edf7; font-weight:700; margin-top:4px; } /* 오타 
   line-height: 1.5;
 }
 
+/* 1) Astra의 모바일/태블릿 모드가 켜졌을 때(권장 트리거) */
+body.ast-header-break-point.post-type-archive-campground .camp-filter{
+  grid-template-columns: 1fr !important;   /* 두 콤보 + 버튼 → 한 줄씩 */
+  gap: 8px !important;
+}
+body.ast-header-break-point.post-type-archive-campground .camp-filter select{
+  width: 100% !important;
+}
+body.ast-header-break-point.post-type-archive-campground .camp-filter .filter-actions{
+  justify-content: stretch !important;
+}
+body.ast-header-break-point.post-type-archive-campground .camp-filter .btn-primary,
+body.ast-header-break-point.post-type-archive-campground .camp-filter .btn-ghost{
+  width: 100% !important; height: 40px !important;
+}
+
+/* 리스트(카드)도 모바일/태블릿에서 간격 컴팩트 */
+body.ast-header-break-point.post-type-archive-campground .camp-item.no-thumb{
+  padding: 14px !important;
+}
+
+/* 2) 안전망: 992px 이하에서도 동일 동작(태블릿 폭 포함) */
+@media (max-width: 992px){
+  .post-type-archive-campground .camp-filter{ grid-template-columns: 1fr !important; gap: 8px !important; }
+  .post-type-archive-campground .camp-filter select{ width: 100% !important; }
+  .post-type-archive-campground .camp-filter .filter-actions{ justify-content: stretch !important; }
+  .post-type-archive-campground .camp-filter .btn-primary,
+  .post-type-archive-campground .camp-filter .btn-ghost{ width: 100% !important; height: 40px !important; }
+  .post-type-archive-campground .camp-item.no-thumb{ padding: 14px !important; }
+}
+
+/* 선택: 작은 폰에서 폰트/여백 살짝 더 줄이기 */
+@media (max-width: 480px){
+  .post-type-archive-campground .camp-item.no-thumb .entry-title a{ font-size: 17px !important; }
+  .post-type-archive-campground .badge{ font-size: 11.5px !important; padding: 3px 8px !important; }
+}
+
+/* 기본 모바일 거터 값(원하시면 18~24px 사이로 조절) */
+:root { --mobile-gutter: 20px; }
+
+/* 1) 본문 컨텐츠 좌우 여백(아카이브/단일/블로그/페이지 공통) */
+@media (max-width: 992px){
+  /* Separate/일반 컨테이너 모두 커버 */
+  .site-content .ast-container,
+  .ast-separate-container .site-content .ast-container,
+  .archive .site-content .ast-container,
+  .single .site-content .ast-container,
+  .page .site-content .ast-container,
+  .blog .site-content .ast-container {
+    padding-left: var(--mobile-gutter) !important;
+    padding-right: var(--mobile-gutter) !important;
+    /* iOS 노치 영역 보정(지원 브라우저에서 자동 가산) */
+    padding-left: calc(var(--mobile-gutter) + env(safe-area-inset-left)) !important;
+    padding-right: calc(var(--mobile-gutter) + env(safe-area-inset-right)) !important;
+  }
+}
+
+/* 2) 헤더 바 좌우 여백(로고/햄버거도 가장자리에서 떨어지게) */
+@media (max-width: 992px){
+  .main-header-bar .ast-container {
+    padding-left: var(--mobile-gutter) !important;
+    padding-right: var(--mobile-gutter) !important;
+    padding-left: calc(var(--mobile-gutter) + env(safe-area-inset-left)) !important;
+    padding-right: calc(var(--mobile-gutter) + env(safe-area-inset-right)) !important;
+  }
+}
+
+/* 3) 캠핑장 목록 페이지의 내부 요소가 테두리와 붙어 보일 때 보조 여백 */
+@media (max-width: 992px){
+  .post-type-archive-campground .page-header { margin-left: 0; margin-right: 0; }
+  .post-type-archive-campground .ast-row { padding-left: 0; padding-right: 0; }
+  /* 카드 자체 패딩은 기존 값 유지, 너무 답답하면 아래 값을 14→16으로 조정 가능 */
+  .post-type-archive-campground .camp-item.no-thumb { padding: 14px !important; }
+}
+
+/* 4) 단일 상세(cg-detail) 본문이 가장자리에 붙어 보일 때(에디터 블록 구조 영향) */
+@media (max-width: 992px){
+  .cg-detail { padding-left: 2px; padding-right: 2px; } /* 미세 보정용, 필요 없으면 제거해도 됩니다 */
+}
+
+/* 홈 래퍼: 모바일 좌우 여백(거터) 상속 */
+.home-wrap { display:block; }
+
+/* 히어로 */
+.home-hero{
+  background: radial-gradient(1200px 400px at 10% 0%, #0c1426 0%, #0f172a 70%, #0b1220 100%);
+  border: 1px solid #1f2937;
+  border-radius: 16px;
+  padding: 28px 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+  margin: 8px 0 14px;
+}
+.home-hero .hero-title{ margin:0 0 8px; font-size: clamp(22px, 3.8vw, 30px); color:#e6edf7; line-height:1.25; }
+.home-hero .hero-sub{ margin:0 0 12px; color:#cbd5e1; font-size:15.5px; }
+.home-hero .hero-cta{ display:flex; gap:10px; flex-wrap:wrap; }
+.home-hero .btn-primary, .home-hero .btn-ghost{
+  height:40px; padding:0 14px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; text-decoration:none;
+}
+.home-hero .btn-primary{ background: var(--brand); color:#06121f; font-weight:700; }
+.home-hero .btn-ghost{ border:1px solid #2b3b53; color:#cbd5e1; background:transparent; }
+.home-hero .btn-ghost:hover{ border-color:#3b4a63; background:rgba(255,255,255,.04); color:#fff; }
+
+/* 빠른 필터 */
+.home-quick .quick-form{
+  display:grid; grid-template-columns: minmax(180px,1fr) minmax(180px,1fr) auto;
+  gap:10px; align-items:center;
+  background: var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:12px; margin: 0 0 16px; box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.home-quick select{
+  height:40px; line-height:40px; padding:0 36px 0 12px; border-radius:10px;
+  background:#0b162b; color:#e5e7eb; border:1px solid #1f2937;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'><path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat; background-position:right 10px center; background-size:14px;
+}
+.home-quick .btn-primary{ height:40px; padding:0 14px; border-radius:10px; }
+
+/* 섹션 타이틀 */
+.sec-title{ margin: 10px 0 10px; font-size: 18px; color:#cfd6e4; }
+
+/* 그리드 카드(지역/테마) */
+.home-grid .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:10px; }
+.home-grid .card.pill{
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid #2b3b53; background:#111c33; color:#c7d2fe; text-decoration:none;
+  border-radius:999px; padding:10px 14px; font-size:14px;
+}
+.home-grid .card.pill:hover{ border-color:#3b4a63; background:#132044; color:#eaf0ff; }
+
+/* 업데이트 */
+.home-updates .updates{ list-style: none; padding:0; margin:0; display:grid; gap:8px; }
+.home-updates .updates li{
+  background:#0f172a; border:1px solid #1f2937; border-radius:10px; padding:10px; color:#e5e7eb;
+}
+.home-updates .updates .date{ color:#8aa2c7; margin-right:8px; }
+.home-updates .note{ color:#9aa6bb; font-size:12.5px; margin-top:8px; }
+
+/* 소개(짧은 SEO 텍스트) */
+.home-about{ margin: 12px 0 10px; color:#cbd5e1; }
+.home-about p{ margin:0; }
+
+/* 하단 버튼 */
+.home-ctafoot{ display:flex; justify-content:flex-end; margin: 12px 0 0; }
+.home-ctafoot .btn-ghost{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:32px; padding:0 12px; font-size:13px; border-radius:10px;
+  border:1px solid #2b3b53; color:#cbd5e1; text-decoration:none;
+}
+.home-ctafoot .btn-ghost:hover{ border-color:#3b4a63; background:rgba(255,255,255,.03); color:#fff; }
+
+/* 반응형: Astra 모바일/태블릿 모드 + 992px 이하 보조 */
+body.ast-header-break-point .home-quick .quick-form{ grid-template-columns: 1fr; }
+@media (max-width: 992px){
+  .home-quick .quick-form{ grid-template-columns: 1fr; }
+  .home-grid .grid{ grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .home-hero{ padding: 24px 16px; }
+}
+
+/* 홈 버튼 공통: 밑줄 제거 + 색 고정 */
+.home-wrap .btn-primary,
+.home-wrap .btn-ghost,
+.home-wrap .hero-cta a,
+.home-wrap .home-ctafoot a {
+  text-decoration: none !important;
+}
+
+/* 방문/호버 상태까지 확실히 고정 */
+.home-wrap a.btn-primary:link,
+.home-wrap a.btn-primary:visited { color:#06121f !important; } /* 파란색 링크 방지 */
+.home-wrap a.btn-primary:hover   { color:#06121f !important; }
+
+.home-wrap a.btn-ghost:link,
+.home-wrap a.btn-ghost:visited   { color:#cbd5e1 !important; }
+.home-wrap a.btn-ghost:hover     { color:#ffffff !important; }
+
+/* pill 카드(지역/테마 버튼)도 혹시 밑줄 생기면 함께 차단 */
+.home-wrap .card.pill { text-decoration:none !important; }
+
+/* 캠핑장 목록 필터 셀렉트: ↓ 화살표 복구 */
+.post-type-archive-campground .camp-filter select {
+  /* 외형 리셋 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* 배경: 단축 속성 대신 개별 속성으로 지정 */
+  background-color: #0b162b !important;   /* ← 배경색만 지정 (background: 금지) */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'><path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 14px !important;
+
+  /* 여백: 화살표 자리 확보 */
+  padding-right: 40px !important;
+}
+
+/* hover/focus에서도 이미지가 사라지지 않도록 배경색만 지정 */
+.post-type-archive-campground .camp-filter select:hover,
+.post-type-archive-campground .camp-filter select:focus,
+.post-type-archive-campground .camp-filter select:focus-visible {
+  background-color: #0b162b !important;
+  border-color: #2b3b53 !important;
+  box-shadow: 0 0 0 2px rgba(96,165,250,.15);
+}
+
+/* 구형 Edge(IE 모드) 기본 화살표 제거 */
+.post-type-archive-campground .camp-filter select::-ms-expand { display: none; }
+
+/* 래퍼 포지셔닝 */
+.post-type-archive-campground .camp-filter .sel {
+  position: relative;
+}
+
+/* select 오른쪽에 화살표 자리 확보 */
+.post-type-archive-campground .camp-filter .sel select {
+  padding-right: 44px !important;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background: none !important;          /* 내부 배경 이미지는 제거 */
+  background-color: #0b162b !important; /* 배경색만 유지 */
+}
+
+/* 화살표(실제 아이콘은 래퍼가 그림) */
+.post-type-archive-campground .camp-filter .sel::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px; height: 14px;
+  pointer-events: none;
+  opacity: .95;
+  background: no-repeat center / 14px;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'>\
+<path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>\
+</svg>");
+}
+
+/* 상태 변화에서도 화살표 유지 */
+.post-type-archive-campground .camp-filter .sel select:hover,
+.post-type-archive-campground .camp-filter .sel select:focus,
+.post-type-archive-campground .camp-filter .sel select:focus-visible {
+  background-color: #0b162b !important;
+  border-color: #2b3b53 !important;
+  box-shadow: 0 0 0 2px rgba(96,165,250,.15);
+}
+
+/* 구형 Edge 기본 화살표 제거(안전) */
+.post-type-archive-campground .camp-filter .sel select::-ms-expand { display: none; }
