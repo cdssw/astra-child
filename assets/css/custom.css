@@ -540,3 +540,929 @@ body.search .search-list {
   text-decoration: none !important;
 }
 .site-footer a:hover { color: #ffffff !important; text-decoration: none !important; }
+
+/* 필터 바 버튼 정렬/높이/스타일(셀렉트 40px과 완전 동일) */
+.post-type-archive-campground .camp-filter .filter-actions{
+  display:flex; gap:8px; align-items:center; justify-content:flex-end;
+}
+
+/* 모든 버튼/링크를 40px로 통일(Submit, .ast-button, .btn-ghost 포함) */
+.post-type-archive-campground .camp-filter button,
+.post-type-archive-campground .camp-filter .ast-button,
+.post-type-archive-campground .camp-filter .btn-primary,
+.post-type-archive-campground .camp-filter .btn-ghost,
+.post-type-archive-campground .camp-filter .filter-actions a {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:40px !important;
+  line-height:40px !important;      /* iOS 정렬 보조 */
+  padding:0 14px !important;
+  border-radius:10px !important;
+  text-decoration:none !important;
+}
+
+/* 필터 적용(기본/ast-button 포함) */
+.post-type-archive-campground .camp-filter .btn-primary,
+.post-type-archive-campground .camp-filter .ast-button[type="submit"]{
+  background: var(--brand) !important;
+  color:#06121f !important;
+  border: none !important;
+  font-weight: 700;
+}
+.post-type-archive-campground .camp-filter .btn-primary:hover,
+.post-type-archive-campground .camp-filter .ast-button[type="submit"]:hover{
+  opacity:.92;
+}
+
+/* 초기화(클래스가 없어도 강제 적용) */
+.post-type-archive-campground .camp-filter .filter-actions a,
+.post-type-archive-campground .camp-filter .btn-ghost{
+  border:1px solid #2b3b53 !important;
+  background: transparent !important;
+  color:#cbd5e1 !important;
+}
+.post-type-archive-campground .camp-filter .filter-actions a:hover,
+.post-type-archive-campground .camp-filter .btn-ghost:hover{
+  border-color:#3b4a63 !important;
+  background: rgba(255,255,255,.03) !important;
+  color:#ffffff !important;
+}
+
+/* 셀렉트와 버튼의 시각적 정렬(경계선/그림자 일체감) */
+.post-type-archive-campground .camp-filter select{
+  height:40px; line-height:40px;
+  padding:0 36px 0 12px; border-radius:10px;
+  border:1px solid #1f2937;
+}
+.post-type-archive-campground .camp-filter select:focus{
+  border-color:#2b3b53; box-shadow:0 0 0 2px rgba(96,165,250,.15);
+}
+
+/* 페이징 컨테이너 중앙 정렬 */
+.post-type-archive-campground .navigation.pagination,
+.post-type-archive-campground nav.pagination {
+  display:flex !important;
+  justify-content:center !important;
+  margin:16px 0 0 !important;
+}
+
+/* 페이지 번호 버튼 공통 */
+.post-type-archive-campground .navigation .nav-links .page-numbers,
+.post-type-archive-campground .page-numbers {
+  display:inline-flex !important;
+  align-items:center; justify-content:center;
+  min-width:36px; height:36px;
+  padding:0 10px; margin:0 4px;
+  border:1px solid #2b3b53 !important;
+  border-radius:10px !important;
+  background:#0f172a !important;
+  color:#cbd5e1 !important;
+  text-decoration:none !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.24);
+}
+
+/* 현재 페이지/호버 상태 */
+.post-type-archive-campground .page-numbers.current{
+  background:#132044 !important;
+  border-color:#3b4a63 !important;
+  color:#ffffff !important;
+  box-shadow:0 2px 10px rgba(0,0,0,.28);
+}
+.post-type-archive-campground .page-numbers:not(.current):hover{
+  border-color:#3b4a63 !important;
+  color:#ffffff !important;
+}
+
+/* 이전/다음 텍스트도 버튼처럼 */
+.post-type-archive-campground .page-numbers.prev,
+.post-type-archive-campground .page-numbers.next{
+  padding:0 12px !important;
+}
+
+/* 페이징: 현재 페이지는 테두리 색만 강조 + 글자 살짝 굵게 */
+.post-type-archive-campground .page-numbers.current,
+body.search .page-numbers.current {
+  background: transparent !important;       /* 배경 채우기 제거 */
+  border-color: var(--brand) !important;    /* 테두리만 강조 */
+  color: #e6edf7 !important;                /* 텍스트는 다크 톤에 맞게 */
+  font-weight: 600 !important;              /* 살짝 굵게 */
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* 현재 페이지 호버 시에도 일관 유지 */
+.post-type-archive-campground .page-numbers.current:hover,
+body.search .page-numbers.current:hover {
+  background: transparent !important;
+  border-color: var(--brand) !important;
+  color: #ffffff !important;
+}
+
+/* 접근성: 포커스 링 유지(키보드 탐색 시) */
+.post-type-archive-campground .page-numbers:focus-visible,
+body.search .page-numbers:focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+  border-color: var(--brand) !important;
+}
+
+.post-type-archive-campground .page-numbers.current,
+body.search .page-numbers.current { border-width: 2px !important; }
+
+/* 페이징 현재 페이지: 테두리 2px + 글자 굵게(배경은 그대로) */
+.post-type-archive-campground .navigation.pagination .nav-links .page-numbers.current,
+.post-type-archive-campground .page-numbers.current,
+body.search .navigation.pagination .nav-links .page-numbers.current,
+body.search .page-numbers.current {
+  border: 2px solid var(--brand) !important;  /* border-width만이 아니라 border 전체 재선언 */
+  background: transparent !important;
+  color: #e6edf7 !important;
+  font-weight: 600 !important;
+}
+
+/* 키보드 포커스 시에도 동일 톤 유지 */
+.post-type-archive-campground .page-numbers.current:focus-visible,
+body.search .page-numbers.current:focus-visible {
+  outline: 2px solid var(--brand) !important;
+  outline-offset: 2px !important;
+  border-color: var(--brand) !important;
+}
+
+/* 정책 문서 공용 래퍼 */
+.policy-wrap{
+  max-width: 820px;     /* 읽기 최적 폭 */
+  margin: 0 auto;
+  padding: 8px 0 24px;
+  color: #e5e7eb;
+  font-size: 15.8px;
+  line-height: 1.78;
+}
+
+/* 페이지 기본 제목(상단 영역)은 policy-wrap 존재 시 숨김 */
+body.page:has(.policy-wrap) .entry-header,
+body.page:has(.policy-wrap) .page-title,
+body.page:has(.policy-wrap) .entry-title{
+  display: none !important;
+}
+
+/* 본문 제목 체계 */
+.policy-wrap h1{ font-size: 26px; line-height: 1.25; margin: 4px 0 12px; color: #e6edf7; }
+.policy-wrap h2{ font-size: 20px; line-height: 1.35; margin: 18px 0 8px; color: #cfd6e4; }
+.policy-wrap h3{ font-size: 18px; line-height: 1.4;  margin: 14px 0 6px; color: #cfd6e4; }
+
+/* 문단/링크 */
+.policy-wrap p{ margin: 0 0 1.05em; }
+.policy-wrap a{ color: var(--brand); text-decoration: none; }
+.policy-wrap a:hover{ text-decoration: underline; }
+
+/* 목록(들여쓰기·간격) */
+.policy-wrap ul, .policy-wrap ol{ margin: 0 0 1em 1.2em; }
+.policy-wrap li{ margin: .3em 0; }
+.policy-wrap ul > li{ list-style: disc; }
+.policy-wrap ol > li{ list-style: decimal; }
+.policy-wrap li > ul, .policy-wrap li > ol{ margin-top: .3em; }
+
+/* 구분선 */
+.policy-wrap hr{
+  border: 0; height: 1px;
+  background: linear-gradient(to right, transparent, #1f2937, transparent);
+  margin: 18px 0;
+}
+
+/* 표(약관 조항/정의 표용) */
+.policy-wrap table{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 14.5px;
+}
+.policy-wrap th, .policy-wrap td{
+  border: 1px solid #243454;
+  padding: 10px;
+  vertical-align: top;
+}
+.policy-wrap thead th{ background: #101a2e; color: #cfd6e4; }
+
+/* 정의 목록(dl) */
+.policy-wrap dl{ margin: 0 0 12px; }
+.policy-wrap dt{ font-weight: 700; color: #cfd6e4; margin-top: 8px; }
+.policy-wrap dd{ margin: 4px 0 8px 0; }
+
+/* 인용/알림 박스 */
+.policy-wrap blockquote{
+  margin: 10px 0;
+  padding: 10px 12px;
+  background: #0e1729;
+  border-left: 3px solid #2b3b53;
+  color: #cbd5e1;
+  border-radius: 8px;
+}
+.policy-wrap .policy-note{
+  margin: 10px 0;
+  padding: 10px 12px;
+  background: #0f2a19;
+  border: 1px solid #1f4a33;
+  color: #9ef0c2;
+  border-radius: 8px;
+}
+
+/* 업데이트 뱃지(선택) */
+.policy-wrap .updated-badge{
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border-radius: 999px;
+  font-size: 12px; color: #c7d2fe;
+  background: #111c33; border: 1px solid #243454;
+}
+
+/* 목차 스타일(선택) */
+.policy-wrap .policy-toc{
+  background: #0f172a; border: 1px solid #1f2937;
+  border-radius: 12px; padding: 10px 12px; margin: 8px 0 14px;
+}
+.policy-wrap .policy-toc .toc-title{ margin: 0 0 6px; font-size: 14px; color: #cfd6e4; }
+.policy-wrap .policy-toc ul{ margin: 0; padding-left: 16px; }
+.policy-wrap .policy-toc a{ text-decoration: none; color: #cbd5e1; }
+.policy-wrap .policy-toc a:hover{ color: #ffffff; text-decoration: underline; }
+
+/* 소제목 주변 여백을 조금 더 넉넉하게(가독성) */
+@media (min-width: 993px){
+  body.page:has(.policy-wrap) main#primary.site-main{ padding-top: 8px !important; }
+}
+
+/* 프린트 간단 최적화 */
+@media print{
+  .main-header-bar, .site-footer, .ast-mobile-popup-drawer{ display: none !important; }
+  .policy-wrap{ color: #111; }
+  .policy-wrap a{ color: #111; text-decoration: underline; }
+}
+
+.cg-detail .chips { margin: 8px 0 12px; }
+.cg-detail .chips-title { margin: 8px 0 6px; font-size: 14px; color: #cfd6e4; }
+.cg-detail .chip-line { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* 소개문 라인: 텍스트(좌) + 버튼(우) 한 줄 */
+.cg-detail .content{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin: 8px 0 12px !important;
+}
+.cg-detail .content p{ margin:0 !important; flex:1; }
+
+/* '지도 크게 보기' 버튼(밑줄 금지/테두리 유지) */
+.cg-detail .content .open-map{
+  text-decoration:none !important;
+  border:1px solid #2b3b53 !important;
+  height:32px; padding:0 12px; font-size:13px; border-radius:10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  color:#cbd5e1 !important; background:transparent;
+}
+.cg-detail .content .open-map:hover{
+  border-color:#3b4a63 !important;
+  background:rgba(255,255,255,.03) !important;
+  color:#fff !important;
+}
+
+/* 모바일에선 줄바꿈 */
+@media (max-width:640px){
+  .cg-detail .content{ flex-direction:column; align-items:flex-start; }
+  .cg-detail .content .open-map{ align-self:flex-end; }
+}
+
+/* 시설/주변 패널(핵심 정보와 동일 톤) */
+.cg-detail .chips{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin: 0 0 12px;
+}
+.cg-detail .chips-title{ margin: 0 0 8px; font-size: 14px; color: #cfd6e4; }
+.cg-detail .chip-line{ display:flex; flex-wrap:wrap; gap:6px; }
+
+/* chips 패널이 두 섹션(시설/주변) 모두 있는 경우 간격 정리 */
+.cg-detail .chips .chip-line + .chips-title{ margin-top: 10px; }
+
+.entry-content p {
+  margin-bottom: 0 !important;
+}
+
+/* 제목 줄을 항상 한 줄(좌:제목 / 우:버튼들) */
+.cg-detail .hd-row{
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  align-items: center !important;
+  gap: 10px;
+}
+.cg-detail .title{
+  margin: 0 !important;
+  line-height: 1.18 !important;
+}
+
+/* 우측 버튼 묶음 */
+.cg-detail .hd-actions{
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 버튼 룩(공통) */
+.cg-detail .btn-ghost{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 34px !important;         /* 32~36 중 취향대로 */
+  padding: 0 12px !important;
+  line-height: 1 !important;        /* 폰트 메트릭 차단 */
+  border: 1px solid #2b3b53 !important;
+  border-radius: 10px !important;
+  color: #cbd5e1 !important;
+  background: transparent;
+  text-decoration: none !important;
+}
+.cg-detail .btn-ghost:hover{
+  border-color: #3b4a63 !important;
+  background: rgba(255,255,255,.03) !important;
+  color: #fff !important;
+}
+
+/* 모바일에선 버튼 묶음이 다음 줄(우측 정렬 유지) */
+@media (max-width: 640px){
+  .cg-detail .hd-row{ grid-template-columns: 1fr; }
+  .cg-detail .hd-actions{ justify-content: flex-end; }
+}
+
+/* 소개문 영역은 원래대로 단락만 보이게(과거 flex 패치 무력화) */
+.cg-detail .content{ display: block !important; margin: 8px 0 12px !important; }
+
+/* 제목 줄 정렬(유지) */
+.cg-detail .hd-row{
+  display:grid !important;
+  grid-template-columns:1fr auto;
+  align-items:center !important;
+  gap:10px;
+}
+.cg-detail .title{ margin:0 !important; line-height:1.18 !important; }
+
+/* 배지 줄: 좌(배지들) | 우(지도 버튼) */
+.cg-detail .badges{
+  display:grid !important;
+  grid-template-columns:1fr auto;
+  align-items:center !important;
+  gap:10px;
+  margin-top:6px;
+}
+.cg-detail .badges .badges-list{ display:flex; flex-wrap:wrap; gap:6px; }
+.cg-detail .badges .badges-actions{ display:inline-flex; align-items:center; justify-content:flex-end; }
+
+/* 지도 버튼 룩 */
+.cg-detail .badges .open-map{
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  height:34px !important; padding:0 12px !important; line-height:1 !important;
+  border:1px solid #2b3b53 !important; border-radius:10px !important;
+  color:#cbd5e1 !important; background:transparent; text-decoration:none !important;
+}
+.cg-detail .badges .open-map:hover{
+  border-color:#3b4a63 !important; background:rgba(255,255,255,.03) !important; color:#fff !important;
+}
+
+/* 모바일에서는 버튼이 다음 줄로 자연스레 */
+@media (max-width:640px){
+  .cg-detail .badges{ grid-template-columns:1fr; }
+  .cg-detail .badges .badges-actions{ justify-content:flex-end; margin-top:6px; }
+}
+
+/* 배지 줄: 좌(뱃지들) | 우(지도 버튼) */
+.cg-detail .badges{
+  display:grid !important;
+  grid-template-columns: 1fr auto;
+  align-items:center !important;
+  gap:10px;
+  margin-top:6px;
+}
+.cg-detail .badges .badges-list{ display:flex; flex-wrap:wrap; gap:6px; }
+.cg-detail .badges .badges-actions{ display:inline-flex; align-items:center; justify-content:flex-end; }
+
+/* 지도 버튼 */
+.cg-detail .badges .open-map{
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  height:34px !important; padding:0 12px !important; line-height:1 !important;
+  border:1px solid #2b3b53 !important; border-radius:10px !important;
+  color:#cbd5e1 !important; background:transparent; text-decoration:none !important;
+}
+.cg-detail .badges .open-map:hover{
+  border-color:#3b4a63 !important; background:rgba(255,255,255,.03) !important; color:#fff !important;
+}
+
+/* 모바일에서 버튼은 다음 줄로 */
+@media (max-width:640px){
+  .cg-detail .badges{ grid-template-columns:1fr; }
+  .cg-detail .badges .badges-actions{ justify-content:flex-end; margin-top:6px; }
+}
+
+/* 배지 줄: 좌(배지들) | 우(지도 버튼) — 지도 바로 위 라인 */
+.cg-detail .badges{
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  align-items: center !important;
+  gap: 10px;
+  margin-top: 6px;
+}
+.cg-detail .badges .badges-list{
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.cg-detail .badges .badges-actions{
+  display: inline-flex; align-items: center; justify-content: flex-end;
+}
+
+/* 지도 버튼 룩(밑줄 금지/테두리 유지) */
+.cg-detail .badges .open-map{
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  height: 34px !important; padding: 0 12px !important; line-height: 1 !important;
+  border: 1px solid #2b3b53 !important; border-radius: 10px !important;
+  color: #cbd5e1 !important; background: transparent; text-decoration: none !important;
+}
+.cg-detail .badges .open-map:hover{
+  border-color: #3b4a63 !important; background: rgba(255,255,255,.03) !important; color: #fff !important;
+}
+
+/* 모바일: 공간 부족 시 버튼을 다음 줄로(우측 정렬 유지) */
+@media (max-width: 640px){
+  .cg-detail .badges{ grid-template-columns: 1fr; }
+  .cg-detail .badges .badges-actions{ justify-content: flex-end; margin-top: 6px; }
+}
+
+/* 소개문은 본래대로 단락만 보이게(과거 flex 흔적 제거) */
+.cg-detail .content{ display: block !important; margin: 8px 0 12px !important; }
+
+/* 기본: 선택값은 항상 하얗게 */
+.post-type-archive-campground .camp-filter select {
+  color: #e6edf7 !important;
+  -webkit-text-fill-color: #e6edf7 !important; /* 일부 웹킷 보조 */
+}
+
+/* placeholder(첫 옵션 value="")가 선택된 경우만 회색 표시
+   :has 지원 브라우저에서 자동 적용 */
+.post-type-archive-campground .camp-filter select:has(option[value=""]:checked) {
+  color: #9aa6bb !important;
+  -webkit-text-fill-color: #9aa6bb !important;
+}
+
+/* 드롭다운 목록(펼친 리스트)도 다크 톤 유지 */
+.post-type-archive-campground .camp-filter select option {
+  background-color: #0b162b;
+  color: #e6edf7;
+}
+.post-type-archive-campground .camp-filter select option[value=""] {
+  color: #9aa6bb;
+}
+
+/* 필터 래퍼(외곽)는 모양만, 그리드는 form에 적용 */
+.post-type-archive-campground .camp-filter {
+  width: 100%;
+  box-sizing: border-box;
+  /* 배경/테두리/패딩/그림자는 기존 유지 */
+}
+
+/* 여기서부터 진짜 그리드 대상은 form */
+.post-type-archive-campground .camp-filter form {
+  display: grid !important;
+  grid-template-columns: minmax(220px,1fr) minmax(220px,1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 내부 요소 폭 안정화 */
+.post-type-archive-campground .camp-filter .sel { width: 100%; }
+.post-type-archive-campground .camp-filter select {
+  width: 100%;
+}
+
+/* 반응형: 태블릿/모바일에서는 1열로 */
+@media (max-width: 992px){
+  .post-type-archive-campground .camp-filter form {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions {
+    display: flex; gap: 8px; justify-content: stretch;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions .ast-button,
+  .post-type-archive-campground .camp-filter .filter-actions .btn-ghost,
+  .post-type-archive-campground .camp-filter .filter-actions a {
+    width: 100%;
+    height: 40px;
+  }
+}
+
+/* 접근성 레이블은 시각적으로 숨기되 스크린리더에서는 읽히게 */
+.screen-reader-text {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+/* 키보드 포커스로 접근 시에만 보이게 하려면(선택) */
+.screen-reader-text:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  clip: auto !important;
+  white-space: normal !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+  background: #0ea5e9 !important;
+  color: #06121f !important;
+  z-index: 100000 !important;
+}
+
+/* 1) camp-filter: 바깥 래퍼는 모양만 유지, 그리드는 form에 적용 */
+.post-type-archive-campground .camp-filter {
+  /* 기존 배경/테두리/패딩/그림자는 그대로 사용 */
+  display: block !important;  /* 래퍼의 grid 선언을 무효화 */
+}
+.post-type-archive-campground .camp-filter form {
+  display: grid !important;
+  grid-template-columns: minmax(220px,1fr) minmax(220px,1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+.post-type-archive-campground .camp-filter .sel { width: 100%; }
+.post-type-archive-campground .camp-filter select { width: 100%; }
+
+/* 2) 반응형: 태블릿/모바일은 1열로 접힘 + 버튼 100% */
+@media (max-width: 992px){
+  .post-type-archive-campground .camp-filter form {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions {
+    display: flex; gap: 8px; justify-content: stretch;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions .ast-button,
+  .post-type-archive-campground .camp-filter .filter-actions .btn-ghost,
+  .post-type-archive-campground .camp-filter .filter-actions a {
+    width: 100%; height: 40px;
+  }
+}
+
+/* 3) 접근성 레이블을 시각적으로 숨김(화면의 깨진 글자 제거) */
+.screen-reader-text{
+  position:absolute !important;
+  width:1px !important; height:1px !important;
+  padding:0 !important; margin:-1px !important;
+  overflow:hidden !important; clip:rect(1px,1px,1px,1px) !important;
+  white-space:nowrap !important; border:0 !important;
+}
+
+/* 4) 선택값 색상 일관(placeholder만 회색) */
+.post-type-archive-campground .camp-filter select {
+  color: #e6edf7 !important;
+  -webkit-text-fill-color: #e6edf7 !important;
+}
+.post-type-archive-campground .camp-filter select:has(option[value=""]:checked) {
+  color: #9aa6bb !important;
+  -webkit-text-fill-color: #9aa6bb !important;
+}
+/* :has 미지원 보조 */
+.post-type-archive-campground .camp-filter select.is-placeholder {
+  color: #9aa6bb !important;
+  -webkit-text-fill-color: #9aa6bb !important;
+}
+
+/* 1) camp-filter: 바깥 래퍼는 모양만 유지, 그리드는 form에 적용 */
+.post-type-archive-campground .camp-filter {
+  /* 기존 배경/테두리/패딩/그림자는 그대로 사용 */
+  display: block !important;  /* 래퍼의 grid 선언을 무효화 */
+}
+.post-type-archive-campground .camp-filter form {
+  display: grid !important;
+  grid-template-columns: minmax(220px,1fr) minmax(220px,1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+.post-type-archive-campground .camp-filter .sel { width: 100%; }
+.post-type-archive-campground .camp-filter select { width: 100%; }
+
+/* 2) 반응형: 태블릿/모바일은 1열로 접힘 + 버튼 100% */
+@media (max-width: 992px){
+  .post-type-archive-campground .camp-filter form {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions {
+    display: flex; gap: 8px; justify-content: stretch;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions .ast-button,
+  .post-type-archive-campground .camp-filter .filter-actions .btn-ghost,
+  .post-type-archive-campground .camp-filter .filter-actions a {
+    width: 100%; height: 40px;
+  }
+}
+
+/* 3) 접근성 레이블을 시각적으로 숨김(화면의 깨진 글자 제거) */
+.screen-reader-text{
+  position:absolute !important;
+  width:1px !important; height:1px !important;
+  padding:0 !important; margin:-1px !important;
+  overflow:hidden !important; clip:rect(1px,1px,1px,1px) !important;
+  white-space:nowrap !important; border:0 !important;
+}
+
+/* 4) 선택값 색상 일관(placeholder만 회색) */
+.post-type-archive-campground .camp-filter select {
+  color: #e6edf7 !important;
+  -webkit-text-fill-color: #e6edf7 !important;
+}
+.post-type-archive-campground .camp-filter select:has(option[value=""]:checked) {
+  color: #9aa6bb !important;
+  -webkit-text-fill-color: #9aa6bb !important;
+}
+/* :has 미지원 보조 */
+.post-type-archive-campground .camp-filter select.is-placeholder {
+  color: #9aa6bb !important;
+  -webkit-text-fill-color: #9aa6bb !important;
+}
+
+/* camp-filter: 래퍼는 모양만, 실제 그리드는 form에 적용 */
+.post-type-archive-campground .camp-filter { display: block !important; }
+
+/* 데스크톱/태블릿 넓은 화면: 드롭박스 3칸 동일 + 버튼 1칸 */
+@media (min-width: 993px){
+  .post-type-archive-campground .camp-filter form{
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(240px, 1fr)) auto; /* ← 3칸 동일 */
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+  }
+  /* 드롭박스 폭/수축 허용 */
+  .post-type-archive-campground .camp-filter .sel{ width: 100%; min-width: 0; }
+  .post-type-archive-campground .camp-filter select{
+    width: 100% !important;
+    min-width: 0;                  /* Safari/Edge 수축 허용 */
+    box-sizing: border-box;
+    height: 40px; line-height: 40px;
+    padding: 0 40px 0 12px;
+  }
+
+  /* 버튼 묶음: 같은 라인 우측 고정, 줄바꿈 방지 */
+  .post-type-archive-campground .camp-filter .filter-actions{
+    display: flex; gap: 8px;
+    align-items: center; justify-content: flex-end;
+    white-space: nowrap;           /* 버튼 줄바꿈 방지(떨어짐 방지 핵심) */
+  }
+  .post-type-archive-campground .camp-filter .filter-actions .ast-button,
+  .post-type-archive-campground .camp-filter .filter-actions .btn-ghost,
+  .post-type-archive-campground .camp-filter .filter-actions a{
+    height: 40px; padding: 0 14px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none !important;
+  }
+}
+
+/* 좁은 화면: 1열로 접힘(버튼은 100% 폭) */
+@media (max-width: 992px){
+  .post-type-archive-campground .camp-filter form{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions{
+    display: flex; gap: 8px; justify-content: stretch;
+  }
+  .post-type-archive-campground .camp-filter .filter-actions .ast-button,
+  .post-type-archive-campground .camp-filter .filter-actions .btn-ghost,
+  .post-type-archive-campground .camp-filter .filter-actions a{
+    width: 100%; height: 40px;
+  }
+}
+
+/* 결과 없음 메시지 가운데 정렬 */
+.post-type-archive-campground .no-result{
+  text-align: center;
+  color: #9aa6bb;          /* 읽기 좋은 회색톤 */
+  padding: 16px 0 24px;    /* 위아래 여백 */
+}
+
+/* 404(페이지 없음) 공통 래퍼 */
+.notfound-wrap{
+  max-width: 860px; margin: 24px auto 32px;
+  background: #0f172a; border: 1px solid #2b3b53; border-radius: 16px;
+  padding: 28px 20px; text-align: center; color: #e6edf7;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+}
+.notfound-icon{ font-size: 40px; margin-bottom: 6px; }
+.notfound-title{ margin: 0 0 10px; font-size: clamp(20px,2.6vw,28px); line-height: 1.25; }
+.notfound-desc{ margin: 0 0 16px; color: #9aa6bb; }
+
+.notfound-actions{
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px;
+}
+.notfound-actions .btn-primary,
+.notfound-actions .btn-ghost{
+  height: 40px; padding: 0 14px; border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  text-decoration: none; cursor: pointer;
+}
+.notfound-actions .btn-primary{ background: var(--brand); color:#06121f; font-weight:700; }
+.notfound-actions .btn-ghost{ border:1px solid #2b3b53; color:#cbd5e1; background:transparent; }
+.notfound-actions .btn-ghost:hover{ border-color:#3b4a63; background:rgba(255,255,255,.04); color:#fff; }
+
+.notfound-search{
+  display: grid; grid-template-columns: 1fr auto; gap: 8px;
+  max-width: 520px; margin: 0 auto;
+}
+.notfound-search input{
+  height: 40px; padding: 0 12px; border-radius: 10px; border:1px solid #2b3b53;
+  background:#0b162b; color:#e6edf7;
+}
+.notfound-search button{
+  height: 40px; padding: 0 14px; border-radius: 10px; border:1px solid #2b3b53;
+  background:transparent; color:#cbd5e1; cursor:pointer;
+}
+.notfound-search button:hover{ border-color:#3b4a63; background:rgba(255,255,255,.04); color:#fff; }
+
+/* 접근성 레이블 시각 숨김(기존 규칙 없을 때) */
+.screen-reader-text{
+  position:absolute !important; width:1px !important; height:1px !important;
+  padding:0 !important; margin:-1px !important; overflow:hidden !important;
+  clip:rect(1px,1px,1px,1px) !important; white-space:nowrap !important; border:0 !important;
+}
+
+/* 작은 화면 간격 */
+@media (max-width: 640px){
+  .notfound-wrap{ padding: 22px 16px; margin: 16px auto 24px; }
+}
+
+/* 404/검색 0건 공통: 타이틀/설명 색상 선명하게 */
+body.error404 .notfound-title,
+body.search .notfound-title{
+  color: #e6edf7 !important;   /* 밝은 제목 */
+  opacity: 1 !important;       /* 혹시 낮춰진 불투명도 제거 */
+}
+
+body.error404 .notfound-desc,
+body.search .notfound-desc{
+  color: #c4d0e5 !important;   /* 가독성 좋은 회색 */
+}
+
+/* 검색 입력: 기본/포커스/활성/호버 모두 다크 배경 고정 */
+body.error404 .notfound-search input,
+body.error404 .notfound-search input:focus,
+body.error404 .notfound-search input:active,
+body.search   .notfound-search input,
+body.search   .notfound-search input:focus,
+body.search   .notfound-search input:active{
+  background-color: #0b162b !important;
+  color: #e6edf7 !important;
+  border: 1px solid #2b3b53 !important;
+  box-shadow: 0 0 0 2px rgba(96,165,250,.15) !important; /* 브랜드 포커스 링 */
+  outline: none !important;
+  caret-color: #e6edf7;
+}
+
+/* placeholder도 다크 톤에 맞게 */
+.notfound-search input::placeholder{
+  color: #8ea2be;
+}
+
+/* 크롬/사파리 자동완성(노란/하얀 배경 방지) */
+body.error404 .notfound-search input:-webkit-autofill,
+body.search   .notfound-search input:-webkit-autofill{
+  -webkit-box-shadow: 0 0 0 1000px #0b162b inset !important;
+  -webkit-text-fill-color: #e6edf7 !important;
+}
+
+/* 검색 버튼도 다크 룩 유지 */
+.notfound-search button{
+  border: 1px solid #2b3b53 !important;
+  background: transparent !important;
+  color: #cbd5e1 !important;
+}
+.notfound-search button:hover{
+  border-color: #3b4a63 !important;
+  background: rgba(255,255,255,.04) !important;
+  color: #fff !important;
+}
+
+/* 홈: 빠른 필터 그리드 — 드롭박스 3칸 동일 + 버튼 1칸 */
+.home-quick .quick-form{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(240px, 1fr)) auto;
+  gap: 10px;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.home-quick .sel{ width: 100%; min-width: 0; }
+.home-quick select{
+  width: 100% !important; min-width: 0; box-sizing: border-box;
+  height: 40px; line-height: 40px; padding: 0 40px 0 12px; border-radius: 10px;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
+  background-color:#0b162b;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'><path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat; background-position:right 12px center; background-size:14px;
+  border:1px solid #1f2937;
+  color:#e6edf7 !important; -webkit-text-fill-color:#e6edf7 !important;
+}
+/* placeholder만 회색 */
+.home-quick select:has(option[value=""]:checked){ color:#9aa6bb !important; -webkit-text-fill-color:#9aa6bb !important; }
+.home-quick select.is-placeholder{ color:#9aa6bb !important; -webkit-text-fill-color:#9aa6bb !important; } /* :has 미지원 보조 */
+
+.home-quick .filter-actions{
+  display:flex; gap:8px; align-items:center; justify-content:flex-end;
+  white-space:nowrap; /* 줄바꿈 방지 */
+}
+.home-quick .filter-actions .ast-button,
+.home-quick .filter-actions .btn-ghost,
+.home-quick .filter-actions a{
+  height:40px; padding:0 14px; border-radius:10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  text-decoration:none !important;
+}
+
+/* 좁은 화면: 1열로 접힘 + 버튼 100% */
+@media (max-width: 992px){
+  .home-quick .quick-form{
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+  .home-quick .filter-actions{ justify-content:stretch; }
+  .home-quick .filter-actions .ast-button,
+  .home-quick .filter-actions .btn-ghost,
+  .home-quick .filter-actions a{ width:100%; }
+}
+
+/* 접근성 레이블 숨김(시각) */
+.screen-reader-text{
+  position:absolute !important; width:1px !important; height:1px !important;
+  padding:0 !important; margin:-1px !important; overflow:hidden !important;
+  clip:rect(1px,1px,1px,1px) !important; white-space:nowrap !important; border:0 !important;
+}
+
+/* 홈 빠른 필터: 드롭박스 3칸 동일 + 버튼 한 칸 */
+.home-quick .quick-form{
+  display:grid !important;
+  grid-template-columns: repeat(3, minmax(240px,1fr)) auto;
+  gap:10px; align-items:center;
+  background: var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:12px; box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+.home-quick .sel{ width:100%; min-width:0; }
+.home-quick select{
+  width:100% !important; min-width:0; box-sizing:border-box;
+  height:40px; line-height:40px; padding:0 40px 0 12px; border-radius:10px;
+  -webkit-appearance:none; -moz-appearance:none; appearance:none;
+  background:#0b162b;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'><path d='M5 8l5 5 5-5' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat; background-position:right 12px center; background-size:14px;
+  border:1px solid #1f2937; color:#e6edf7 !important; -webkit-text-fill-color:#e6edf7 !important;
+}
+/* placeholder만 회색 */
+.home-quick select:has(option[value=""]:checked){ color:#9aa6bb !important; -webkit-text-fill-color:#9aa6bb !important; }
+.home-quick select.is-placeholder{ color:#9aa6bb !important; -webkit-text-fill-color:#9aa6bb !important; }
+
+.home-quick .filter-actions{
+  display:flex; gap:8px; align-items:center; justify-content:flex-end; white-space:nowrap;
+}
+.home-quick .filter-actions .ast-button,
+.home-quick .filter-actions .btn-ghost,
+.home-quick .filter-actions a{
+  height:40px; padding:0 14px; border-radius:10px;
+  display:inline-flex; align-items:center; justify-content:center; text-decoration:none !important;
+}
+
+/* 좁은 화면: 1열로 접힘 + 버튼 100% */
+@media (max-width: 992px){
+  .home-quick .quick-form{ grid-template-columns:1fr !important; gap:8px; }
+  .home-quick .filter-actions{ justify-content:stretch; }
+  .home-quick .filter-actions .ast-button,
+  .home-quick .filter-actions .btn-ghost,
+  .home-quick .filter-actions a{ width:100%; }
+}
+
+/* 칩 그리드(지역/테마) */
+.home-grid .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:10px; }
+.home-grid .card.pill{
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid #2b3b53; background:#111c33; color:#c7d2fe; text-decoration:none;
+  border-radius:999px; padding:10px 14px; font-size:14px;
+}
+.home-grid .card.pill:hover{ border-color:#3b4a63; background:#132044; color:#eaf0ff; }
+
+/* 접근성 레이블 숨김(시각) */
+.screen-reader-text{
+  position:absolute !important; width:1px !important; height:1px !important;
+  padding:0 !important; margin:-1px !important; overflow:hidden !important;
+  clip:rect(1px,1px,1px,1px) !important; white-space:nowrap !important; border:0 !important;
+}

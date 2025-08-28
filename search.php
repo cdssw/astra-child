@@ -43,10 +43,21 @@ $total = $wp_query->found_posts;
       <?php endwhile; ?>
     </div>
     <?php the_posts_pagination(array('mid_size' => 1)); ?>
-  <?php else: ?>
-    <p class="no-result">“<?php echo esc_html($q); ?>”에 대한 결과가 없습니다.
-      <a href="<?php echo esc_url(get_post_type_archive_link('campground')); ?>">캠핑장 목록으로</a>
-    </p>
+  <?php else : ?>
+    <section class="notfound-wrap" aria-label="검색 결과 없음">
+      <div class="notfound-icon" aria-hidden="true">🔎</div>
+      <h1 class="notfound-title">검색 결과가 없습니다.</h1>
+      <p class="notfound-desc">키워드를 바꾸거나, 아래 버튼으로 이동해 보세요.</p>
+      <div class="notfound-actions">
+        <a class="btn-ghost" href="<?php echo esc_url(get_post_type_archive_link('campground')); ?>">캠핑장 목록</a>
+        <a class="btn-primary" href="<?php echo esc_url(home_url('/')); ?>">홈으로</a>
+      </div>
+      <form class="notfound-search" role="search" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+        <label for="nf-s2" class="screen-reader-text">사이트 검색</label>
+        <input id="nf-s2" type="search" name="s" placeholder="검색…">
+        <button type="submit" aria-label="검색">🔍</button>
+      </form>
+    </section>
   <?php endif; ?>
 </main>
 <?php get_footer();

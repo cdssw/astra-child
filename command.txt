@@ -1,0 +1,14 @@
+// 목록전체 지우기
+docker compose exec --user www-data wordpress sh -lc 'wp --path=/var/www/html post delete $(wp --path=/var/www/html post list --post_type=campground --meta_key=_source_id --meta_compare=EXISTS --format=ids) --force'
+
+// 지역 전체 지우기
+docker compose exec --user www-data wordpress sh -lc '\
+ids=$(wp --path=/var/www/html term list region --field=term_id); \
+if [ -n "$ids" ]; then \
+  wp --path=/var/www/html term delete region $ids; \
+else \
+  echo "삭제할 지역 용어가 없습니다."; \
+fi'
+
+// 재임포트
+docker compose exec --user www-data wordpress wp --path=/var/www/html cg import-csv --file=/var/www/html/wp-content/uploads/output_camp.csv
