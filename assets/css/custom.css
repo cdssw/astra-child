@@ -1466,3 +1466,127 @@ body.search   .notfound-search input:-webkit-autofill{
   padding:0 !important; margin:-1px !important; overflow:hidden !important;
   clip:rect(1px,1px,1px,1px) !important; white-space:nowrap !important; border:0 !important;
 }
+
+/* A) 단일 캠핑장 본문 좌우 여백(목록과 유사 폭) */
+@media (max-width: 992px){
+  .single-campground .site-content .ast-container{
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+@media (min-width: 993px){
+  .single-campground .site-content .ast-container{
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+/* cg-detail 카드 내부도 살짝 컴팩트하게 */
+.cg-detail .info, .cg-detail .sites{ padding: 12px; }
+.cg-detail .sites .tbl th, .cg-detail .sites .tbl td{ padding: 8px; }
+
+/* B) 지도 아래 액션바: 좌측/우측 정렬 */
+.cg-detail .map-actionbar{
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: center; gap: 10px; margin-top: 8px;
+}
+.cg-detail .map-actionbar .left{ display: inline-flex; align-items: center; gap: 8px; }
+.cg-detail .map-actionbar .right{ justify-self: end; display: inline-flex; }
+
+/* 버튼 룩 통일 */
+.cg-detail .map-actionbar .btn-ghost,
+.cg-detail .btn-ghost.btn-back,
+.cg-detail .open-map{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:34px; padding:0 12px; border-radius:10px;
+  border:1px solid #2b3b53; color:#cbd5e1; background:transparent;
+  text-decoration:none !important; line-height:1;
+}
+.cg-detail .map-actionbar .btn-ghost:hover,
+.cg-detail .btn-ghost.btn-back:hover,
+.cg-detail .open-map:hover{
+  border-color:#3b4a63; background:rgba(255,255,255,.03); color:#fff;
+}
+
+/* C) 헤더는 제목·위치 정보만(목록 버튼이 내려오므로) */
+.cg-detail .hd-row{
+  display:grid; grid-template-columns: 1fr; align-items:center; gap:6px;
+}
+/* 혹시 남은 .hd-actions 래퍼가 있으면 숨김(안전장치) */
+.cg-detail .hd-actions{ display:none !important; }
+
+/* 본문 좌우 여백(목록과 유사 폭) */
+@media (max-width: 992px){
+  .single-campground .site-content .ast-container{ padding-left:16px !important; padding-right:16px !important; }
+}
+@media (min-width: 993px){
+  .single-campground .site-content .ast-container{ padding-left:20px !important; padding-right:20px !important; }
+}
+
+/* 지도 아래 액션바(좌: 지도 크게 보기 / 우: 목록으로) */
+.cg-detail .map-actionbar{
+  display:grid !important; grid-template-columns: 1fr auto; align-items:center !important;
+  gap:10px; margin-top:8px;
+}
+.cg-detail .map-actionbar .left{ display:inline-flex !important; align-items:center !important; gap:8px; }
+.cg-detail .map-actionbar .right{ display:inline-flex !important; justify-self:end !important; }
+
+/* 버튼 룩(강제 적용) */
+.cg-detail .map-actionbar .btn-ghost,
+.cg-detail .map-actionbar .open-map,
+.cg-detail .map-actionbar .btn-back{
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  height:34px !important; padding:0 12px !important; border-radius:10px !important;
+  border:1px solid #2b3b53 !important; background:transparent !important;
+  color:#cbd5e1 !important; text-decoration:none !important; line-height:1 !important;
+}
+.cg-detail .map-actionbar .btn-ghost:hover,
+.cg-detail .map-actionbar .open-map:hover,
+.cg-detail .map-actionbar .btn-back:hover{
+  border-color:#3b4a63 !important; background:rgba(255,255,255,.03) !important; color:#fff !important;
+}
+
+/* 헤더 정리: 제목/위치만 보이게(상단 액션 흔적 제거) */
+.cg-detail .hd-row{ display:grid !important; grid-template-columns:1fr !important; align-items:center !important; gap:6px; }
+.cg-detail .hd-actions, .cg-detail .hd-row .open-map{ display:none !important; }
+
+@media (max-width: 544px) {
+  .ast-separate-container .ast-article-post, .ast-separate-container .ast-article-single, .ast-separate-container .comments-title, .ast-separate-container .ast-archive-description {
+    padding: 1.5em 0.2em;
+  }
+}
+
+/* 본문 좌우 여백(컴팩트) */
+@media (max-width: 992px){
+  .single-campground .site-content .ast-container{ padding-left:16px !important; padding-right:16px !important; }
+}
+@media (min-width: 993px){
+  .single-campground .site-content .ast-container{ padding-left:20px !important; padding-right:20px !important; }
+}
+
+/* 지도 아래 액션바 레이아웃 */
+.cg-detail .cg-map-wrap .map-actionbar{
+  display:grid !important; grid-template-columns: 1fr auto !important;
+  align-items:center !important; gap:10px !important; margin-top:8px !important;
+}
+.cg-detail .cg-map-wrap .map-actionbar .left{ display:inline-flex !important; gap:8px !important; align-items:center !important; }
+.cg-detail .cg-map-wrap .map-actionbar .right{ display:inline-flex !important; justify-self:end !important; }
+
+/* 버튼 톤/룩(강제) */
+.cg-detail .cg-map-wrap .map-actionbar .btn-ghost,
+.cg-detail .cg-map-wrap .map-actionbar .open-map,
+.cg-detail .cg-map-wrap .map-actionbar .btn-back{
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+  height:34px !important; padding:0 12px !important; line-height:1 !important;
+  border-radius:10px !important; border:1px solid #2b3b53 !important;
+  background:transparent !important; color:#cbd5e1 !important;
+  text-decoration:none !important;
+}
+.cg-detail .cg-map-wrap .map-actionbar .btn-ghost:hover,
+.cg-detail .cg-map-wrap .map-actionbar .open-map:hover,
+.cg-detail .cg-map-wrap .map-actionbar .btn-back:hover{
+  border-color:#3b4a63 !important; background:rgba(255,255,255,.03) !important; color:#fff !important;
+}
+
+/* 헤더에서 버튼 흔적 숨김(안전장치) */
+.cg-detail .hd-actions, .cg-detail .hd-row .open-map{ display:none !important; }
+

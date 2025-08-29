@@ -482,3 +482,140 @@ add_shortcode('cg_quick_links', function ($atts = []) {
 
 <?php return ob_get_clean();
 });
+
+add_action('wp_footer', function () {
+  if (!is_singular('campground')) return; ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var detail = document.querySelector('.cg-detail');
+      var mapWrap = document.querySelector('.cg-detail .cg-map-wrap');
+      if (!detail || !mapWrap) return;
+
+      // A) 상단(제목 줄) 잔여 '지도 크게 보기'/액션 제거
+      var headerOpen = document.querySelector('.cg-detail .hd-row .open-map');
+      if (headerOpen && headerOpen.parentElement) headerOpen.parentElement.removeChild(headerOpen);
+      var hdActions = document.querySelector('.cg-detail .hd-actions');
+      if (hdActions) hdActions.remove();
+
+      // B) '인근 캠핑장' 섹션 찾기(여러 후보 + 타이틀 텍스트)
+      function findRelatedBlock() {
+        var sels = [
+          '.cg-detail .related-camps-section',
+          '.cg-detail #related-camps',
+          '.cg-detail .related-camps',
+          '.cg-detail .nearby-camps',
+          '.cg-detail .nearby'
+        ];
+        for (var i = 0; i < sels.length; i++) {
+          var el = document.querySelector(sels[i]);
+          if (el) return el.closest('section') || el;
+        }
+        // 타이틀 텍스트 매칭(인근 캠핑장)
+        var heads = detail.querySelectorAll('h2, h3, .section-title');
+        for (var j = 0; j < heads.length; j++) {
+          var h = heads[j];
+          var txt = (h.textContent || '').replace(/\s+/g, '').trim();
+          if (txt.indexOf('인근캠핑장') > -1) return h.closest('section') || h.parentElement;
+        }
+        return null;
+      }
+
+      // C) '사이트 구성' 마지막 요소
+      var sitesList = detail.querySelectorAll('.sites');
+      var lastSites = sitesList.length ? sitesList[sitesList.length - 1] : null;
+
+      // D) 최종 이동: .sites 뒤 → 인근 캠핑장 앞 → 맨 아래
+      var related = findRelatedBlock();
+      if (lastSites && lastSites.parentNode) {
+        lastSites.insertAdjacentElement('afterend', mapWrap);
+      } else if (related && related.parentNode) {
+        related.parentNode.insertBefore(mapWrap, related);
+      } else {
+        detail.appendChild(mapWrap);
+      }
+
+      // E) 지도 아래 액션바(좌: open-map / 우: back)
+      var bar = mapWrap.querySelector('.map-actionbar');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'map-actionbar';
+        bar.innerHTML = '<div class="left"></div><div class="right"></div>';
+        var old = mapWrap.querySelector('.cg-map-actions');
+        if (old) old.replaceWith(bar);
+        else mapWrap.appendChild(bar);
+      }
+      var leftBox = bar.querySelector('.left');
+      var rightBox = bar.querySelector('.right');
+
+      // 좌측: open-map(없으면 생성)
+      var openBtn = mapWrap.querySelector('.open-map') || document.querySelector('.cg-detail .open-map');
+      if (!openBtn) {
+        var el = mapWrap.querySelector('#cg-map');
+        if (el) {
+          var addr = (el.dataset.address || '').trim();
+          var lat = parseFloat(el.dataset.lat),
+            lng = parseFloat(el.dataset.lng);
+          var url = addr ? ('https://map.kakao.com/link/search/' + encodeURIComponent(addr)) :
+            (!isNaN(lat) && !isNaN(lng) ? ('https://map.kakao.com/link/map/' + lat + ',' + lng) : '#');
+          openBtn = document.createElement('a');
+          openBtn.className = 'btn-ghost open-map';
+          openBtn.href = url;
+          openBtn.target = '_self';
+          openBtn.rel = 'noopener';
+          openBtn.textContent = '지도 크게 보기';
+        }
+      }
+      if (openBtn) {
+        if (openBtn.parentElement) openBtn.parentElement.removeChild(openBtn);
+        leftBox.appendChild(openBtn);
+      }
+
+      // 우측: 목록으로(상단의 것을 내려보내거나 생성)
+      var backBtn = document.querySelector('.cg-detail .btn-back');
+      if (backBtn && backBtn.parentElement && !backBtn.closest('.map-actionbar')) {
+        backBtn.parentElement.removeChild(backBtn);
+      }
+      if (!backBtn) {
+        backBtn = document.createElement('a');
+        backBtn.className = 'btn-ghost btn-back';
+        backBtn.href = '/camping/'; // 아카이브 슬러그가 다르면 이 줄만 교체
+        backBtn.textContent = '목록으로';
+      }
+      rightBox.appendChild(backBtn);
+    });
+  </script>
+<?php }, 99);
+
+// 모바일 카드형 표: 라벨 주입(thead → 각 셀 data-label), 빈 값 숨김 플래그
+add_action('wp_footer', function () {
+  if (!is_singular('campground')) return; ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.cg-detail .sites .tbl').forEach(function(tbl) {
+        if (tbl.classList.contains('is-labeled')) return; // 중복 방지
+        var head = tbl.querySelector('thead');
+        var headers = [];
+        if (head) {
+          headers = Array.from(head.querySelectorAll('th')).map(function(th) {
+            return (th.textContent || '').trim();
+          });
+        }
+        // tbody의 tr 안 td/th 모두 대상(행 머리글 th 고려)
+        tbl.querySelectorAll('tbody tr').forEach(function(tr) {
+          Array.from(tr.children).forEach(function(cell, i) {
+            var tag = cell.tagName.toLowerCase();
+            if (tag !== 'td' && tag !== 'th') return;
+            // data-label 주입
+            if (!cell.getAttribute('data-label') && headers[i]) {
+              cell.setAttribute('data-label', headers[i]);
+            }
+            // 값이 비면(is-empty) 표시 → 모바일에서 숨김
+            var val = (cell.textContent || '').replace(/\s+/g, '').trim();
+            if (!val) cell.classList.add('is-empty');
+          });
+        });
+        tbl.classList.add('is-labeled');
+      });
+    });
+  </script>
+<?php }, 99);
