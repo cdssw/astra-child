@@ -42,7 +42,18 @@ $total = $wp_query->found_posts;
         </article>
       <?php endwhile; ?>
     </div>
-    <?php the_posts_pagination(array('mid_size' => 1)); ?>
+
+    <?php
+    // 페이징: 화살표로 표시(이전/다음 → ‹/›)
+    the_posts_pagination(array(
+      'mid_size'           => 1,
+      'end_size'           => 1,
+      'prev_text'          => '<span class="screen-reader-text">이전 페이지</span><span aria-hidden="true">‹</span>',
+      'next_text'          => '<span class="screen-reader-text">다음 페이지</span><span aria-hidden="true">›</span>',
+      'screen_reader_text' => '',
+    ));
+    ?>
+
   <?php else : ?>
     <section class="notfound-wrap" aria-label="검색 결과 없음">
       <div class="notfound-icon" aria-hidden="true">🔎</div>

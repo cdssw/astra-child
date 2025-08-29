@@ -181,7 +181,7 @@ select:focus, input[type="text"]:focus, input[type="search"]:focus { border-colo
 .home-hero{
   background: radial-gradient(1200px 400px at 10% 0%, #0c1426 0%, #0f172a 70%, #0b1220 100%);
   border:1px solid #1f2937; border-radius:16px; padding:28px 20px;
-  box-shadow:0 8px 32px rgba(0,0,0,.35); margin:8px 0 14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.35); margin:20px 0 14px;
 }
 .home-hero .hero-title{ margin:0 0 8px; font-size:clamp(22px,3.8vw,30px); color:#e6edf7; line-height:1.25; }
 .home-hero .hero-sub{ margin:0 0 12px; color:#cbd5e1; font-size:15.5px; }
@@ -2378,4 +2378,26 @@ body.search .pagination .page-numbers.dots {
 .post-type-archive-campground .pagination li > .dots,
 body.search .pagination li > .dots {
   display: none !important;
+}
+
+/* search-wrap 요소의 좌우 패딩만 제거 */
+body.search main#primary.site-main.ast-container.search-wrap {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* (우선순위 강화 버전: Astra 분리 컨테이너 사용 시) */
+body.search .ast-separate-container .site-content .ast-container > main.site-main.ast-container.search-wrap {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* 2) 목록과 페이징 사이 간격(한 줄 띄우기) */
+body.search .search-list{
+  margin-bottom: 12px !important;   /* 목록 끝에 여백 추가 */
+}
+body.search .navigation.pagination,
+body.search nav.pagination{
+  margin-top: 12px !important;      /* 페이징 위쪽 간격 */
+  margin-bottom: 12px !important;   /* 하단도 살짝 여유 */
 }
