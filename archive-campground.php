@@ -12,6 +12,32 @@ $cur_do     = isset($_GET['region_do'])  ? (string) wp_unslash($_GET['region_do'
 $cur_si     = isset($_GET['region_si'])  ? (string) wp_unslash($_GET['region_si'])  : '';
 $cur_theme  = isset($_GET['camp_theme']) ? (string) wp_unslash($_GET['camp_theme']) : '';
 
+// region만 넘어왔을 때 시도/시군구 유추
+if ($cur_region && !$cur_do && !$cur_si) {
+  $t = get_term_by('slug', $cur_region, 'region');
+  if ($t) {
+    if ($t->parent) { // 자식(시군구)
+      $cur_si = $t->slug;
+      $p = get_term($t->parent, 'region');
+      if ($p && !is_wp_error($p)) $cur_do = $p->slug;
+    } else {
+      $cur_do = $t->slug; // 부모(시도)
+    }
+  }
+}
+
+/* camp_theme: 슬러그/이름 모두 지원 (홈에서 이름이 넘어와도 셋팅되도록) */
+if ($cur_theme !== '') {
+  $cur_theme = rawurldecode($cur_theme); // 혹시 퍼센트 인코딩일 때 대비
+  $term = get_term_by('slug', $cur_theme, 'camp_theme');
+  if (!$term) $term = get_term_by('name', $cur_theme, 'camp_theme');
+  if ($term && !is_wp_error($term)) {
+    $cur_theme = $term->slug;            // 이후 selected/페이징은 슬러그 기준
+  } else {
+    $cur_theme = '';
+  }
+}
+
 /* 유효성: 없는 슬러그가 넘어오면 초기화 */
 if ($cur_do && ! get_term_by('slug', $cur_do, 'region'))        $cur_do = '';
 if ($cur_si && ! get_term_by('slug', $cur_si, 'region'))        $cur_si = '';
@@ -43,18 +69,6 @@ if (!is_wp_error($provinces)) {
         $parent_of_child[$c->slug] = $p->slug;
       }
     }
-  }
-}
-
-/* 기존 region만 넘어온 경우, 시도/시군구 역추적 */
-if ($cur_region && !$cur_do && !$cur_si) {
-  if (isset($parent_of_child[$cur_region])) {
-    // 시군구 슬러그였다
-    $cur_si = $cur_region;
-    $cur_do = $parent_of_child[$cur_region] ?? '';
-  } else {
-    // 시도 슬러그였다
-    $cur_do = $cur_region;
   }
 }
 
