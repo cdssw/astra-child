@@ -586,35 +586,32 @@ add_action('wp_footer', function () {
   </script>
 <?php }, 99);
 
-// 모바일 카드형 표: 라벨 주입(thead → 각 셀 data-label), 빈 값 숨김 플래그
+
+// [사이트 구성] 표: 모바일 카드 라벨 보조(값 DOM은 건드리지 않음)
 add_action('wp_footer', function () {
   if (!is_singular('campground')) return; ?>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.cg-detail .sites .tbl').forEach(function(tbl) {
-        if (tbl.classList.contains('is-labeled')) return; // 중복 방지
-        var head = tbl.querySelector('thead');
-        var headers = [];
-        if (head) {
-          headers = Array.from(head.querySelectorAll('th')).map(function(th) {
-            return (th.textContent || '').trim();
-          });
-        }
-        // tbody의 tr 안 td/th 모두 대상(행 머리글 th 고려)
-        tbl.querySelectorAll('tbody tr').forEach(function(tr) {
-          Array.from(tr.children).forEach(function(cell, i) {
-            var tag = cell.tagName.toLowerCase();
-            if (tag !== 'td' && tag !== 'th') return;
-            // data-label 주입
-            if (!cell.getAttribute('data-label') && headers[i]) {
-              cell.setAttribute('data-label', headers[i]);
+        if (tbl.classList.contains('js-labelled')) return; // 중복 방지
+
+        // 헤더 수집(없으면 기본 라벨 사용)
+        var heads = Array.from(tbl.querySelectorAll('thead th')).map(function(th) {
+          return (th.textContent || '').trim();
+        });
+        if (!heads.length) heads = ['유형', '가로(m)', '세로(m)', '수량(면)'];
+
+        var rows = tbl.querySelectorAll('tbody tr');
+        rows.forEach(function(tr) {
+          Array.from(tr.children).forEach(function(cell, idx) {
+            if (!cell || (cell.tagName !== 'TD' && cell.tagName !== 'TH')) return;
+            if (!cell.hasAttribute('data-label') && heads[idx]) {
+              cell.setAttribute('data-label', heads[idx]);
             }
-            // 값이 비면(is-empty) 표시 → 모바일에서 숨김
-            var val = (cell.textContent || '').replace(/\s+/g, '').trim();
-            if (!val) cell.classList.add('is-empty');
           });
         });
-        tbl.classList.add('is-labeled');
+
+        tbl.classList.add('js-labelled');
       });
     });
   </script>

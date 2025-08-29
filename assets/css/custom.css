@@ -1590,3 +1590,624 @@ body.search   .notfound-search input:-webkit-autofill{
 /* 헤더에서 버튼 흔적 숨김(안전장치) */
 .cg-detail .hd-actions, .cg-detail .hd-row .open-map{ display:none !important; }
 
+/* ── 모바일(≤640px): '사이트 구성' 표 → 카드형 전환 ───────────────────── */
+@media (max-width: 640px){
+  /* 가로 스크롤 대신 카드로 보이게 오버플로우 해제 */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+
+  /* 기본 테이블 폭/간격 */
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  /* 행을 카드화 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tr{ display: block !important; }
+
+  .cg-detail .sites .tbl tbody tr{
+    background: #0e1729;
+    border: 1px solid #243454;
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 셀: 그리드 1fr | auto (왼쪽 라벨, 오른쪽 값) */
+  .cg-detail .sites .tbl td,
+  .cg-detail .sites .tbl th{
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #1f2937 !important;
+    color: #e6edf7;
+    text-align: left;
+    word-break: break-word;
+  }
+  .cg-detail .sites .tbl tr > *:last-child{ border-bottom: 0 !important; }
+
+  /* 왼쪽 라벨(data-label) */
+  .cg-detail .sites .tbl td::before,
+  .cg-detail .sites .tbl th::before{
+    content: attr(data-label);
+    color: #9aa6bb;
+    font-weight: 600;
+    padding-right: 10px;
+  }
+
+  /* 오른쪽 값(기존 콘텐츠) */
+  .cg-detail .sites .tbl td > *,
+  .cg-detail .sites .tbl th > *{
+    justify-self: end;
+  }
+  /* 값이 단순 텍스트(자식 요소 없음)일 때도 오른쪽 정렬 느낌 */
+  .cg-detail .sites .tbl td{ text-align: right; }
+}
+
+/* ── 태블릿/PC(>640px): 기존 표 유지 ───────────────────────────────── */
+@media (min-width: 641px){
+  .cg-detail .sites .tbl th, .cg-detail .sites .tbl td{ padding: 10px 12px; }
+}
+
+/* ── 모바일(≤640px)에서만 '사이트 구성' 표 → 카드형 ─────────────────── */
+@media (max-width: 640px){
+
+  /* 1) 기존 최소폭/가로 스크롤 강제 해제(현재 깨짐의 1번 원인) */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    min-width: 0 !important;          /* ← 기존 min-width:600px 덮기 */
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  /* 3) 행을 카드처럼 세로 쌓기 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tr{ display: block !important; }
+
+  .cg-detail .sites .tbl tbody tr{
+    background: #0e1729;
+    border: 1px solid #243454;
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 4) 셀: 왼쪽 라벨, 오른쪽 값 — 값 색/정렬을 강제해 “비어 보임” 방지 */
+  .cg-detail .sites .tbl td,
+  .cg-detail .sites .tbl th{
+    display: grid !important;
+    grid-template-columns: 1fr auto;  /* 라벨 1fr, 값 auto */
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #1f2937 !important;
+    color: #e6edf7 !important;        /* 값 색상 고정 */
+    text-align: left;
+    word-break: break-word;
+  }
+  .cg-detail .sites .tbl tr > *:last-child{ border-bottom: 0 !important; }
+
+  /* 5) 라벨 — data-label 있으면 그대로 사용, 없으면 컬럼명 고정 주입 */
+  .cg-detail .sites .tbl td::before,
+  .cg-detail .sites .tbl th::before{
+    content: attr(data-label);
+    color: #9aa6bb;
+    font-weight: 600;
+    padding-right: 10px;
+  }
+  /* data-label이 비어 있을 때 고정 라벨(표가 항상 4열 구조일 때) */
+  .cg-detail .sites .tbl td:nth-child(1)::before,
+  .cg-detail .sites .tbl th:nth-child(1)::before{ content: attr(data-label), "유형"; }
+  .cg-detail .sites .tbl td:nth-child(2)::before,
+  .cg-detail .sites .tbl th:nth-child(2)::before{ content: attr(data-label), "가로(m)"; }
+  .cg-detail .sites .tbl td:nth-child(3)::before,
+  .cg-detail .sites .tbl th:nth-child(3)::before{ content: attr(data-label), "세로(m)"; }
+  .cg-detail .sites .tbl td:nth-child(4)::before,
+  .cg-detail .sites .tbl th:nth-child(4)::before{ content: attr(data-label), "수량(면)"; }
+
+  /* 6) 값(오른쪽) — 어떤 구조든 오른쪽으로 정렬되게 */
+  .cg-detail .sites .tbl td > *,
+  .cg-detail .sites .tbl th > *{ justify-self: end; }
+  .cg-detail .sites .tbl td{ text-align: right; }
+
+  /* 7) 완전히 빈 칸은 숨김(불필요한 라인 제거) */
+  .cg-detail .sites .tbl td:empty,
+  .cg-detail .sites .tbl th:empty{ display: none !important; }
+}
+
+/* ── 태블릿/PC(>640px): 기존 표 스타일 유지(패딩만 통일) ─────────────── */
+@media (min-width: 641px){
+  .cg-detail .sites .tbl th, .cg-detail .sites .tbl td{ padding: 10px 12px; }
+}
+
+/* ─ 모바일(≤640px): '사이트 구성' 표 → 카드형, 상단 하얀 줄 제거 ─ */
+@media (max-width: 640px){
+
+  /* 테이블 컨테이너: 가로 스크롤 해제 */
+  .cg-detail .sites .tbl-wrap{
+    overflow: visible !important;
+  }
+  /* 테이블 자체 보더/최소폭 제거(하얀 줄 원인 차단) */
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    min-width: 0 !important;
+    border: 0 !important;                 /* ← 테마 기본 table 보더 제거 */
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  /* 행을 카드로 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tr{ display:block !important; }
+  .cg-detail .sites .tbl tbody tr{
+    background:#0e1729;
+    border:1px solid #243454;             /* 카드 외곽선 */
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 셀 공통(라벨 왼쪽, 값 오른쪽) */
+  .cg-detail .sites .tbl td,
+  .cg-detail .sites .tbl th{
+    display:grid !important;
+    grid-template-columns: 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:8px 0 !important;
+    border:0 !important;
+    border-bottom:1px solid #1f2937 !important;
+    color:#e6edf7 !important;
+    text-align:left;
+    word-break:break-word;
+  }
+  .cg-detail .sites .tbl tr > *:last-child{ border-bottom:0 !important; }
+
+  /* 라벨(왼쪽) */
+  .cg-detail .sites .tbl td::before,
+  .cg-detail .sites .tbl th::before{
+    content: attr(data-label);
+    color:#9aa6bb; font-weight:600; padding-right:10px;
+  }
+
+  /* 값(오른쪽) — 어떤 구조든 오른쪽 정렬 */
+  .cg-detail .sites .tbl td > *,
+  .cg-detail .sites .tbl th > *{ justify-self:end; }
+  .cg-detail .sites .tbl td{ text-align:right; }
+
+  /* 1열(유형)은 카드 타이틀처럼 보이게: 라벨 숨기고 값 좌측·굵게 */
+  .cg-detail .sites .tbl tr > :nth-child(1){
+    grid-template-columns: 1fr !important;      /* 라벨 칼럼 제거 */
+    border-bottom:1px solid #243454 !important;  /* 타이틀 아래만 살짝 구분 */
+  }
+  .cg-detail .sites .tbl tr > :nth-child(1)::before{ content: '' !important; }
+  .cg-detail .sites .tbl tr > :nth-child(1) > *{
+    justify-self:start !important; text-align:left !important;
+    font-weight:700; color:#dbe4f3;
+  }
+
+  /* 완전히 빈 칸은 감추기(불필요 라인 제거) */
+  .cg-detail .sites .tbl td:empty,
+  .cg-detail .sites .tbl th:empty{ display:none !important; }
+}
+
+/* ─ 태블릿/PC(>640px): 기존 표 유지(패딩만 통일) ─ */
+@media (min-width: 641px){
+  .cg-detail .sites .tbl th, .cg-detail .sites .tbl td{ padding:10px 12px; }
+}
+
+/* ── 모바일(≤640px): '사이트 구성' 표 → 카드형, 라벨 항상 보이기, 하얀 줄 제거 ─ */
+@media (max-width: 640px){
+
+  /* 가로 스크롤/최소폭/보더 제거(하얀 줄 원인 차단) */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    min-width: 0 !important;                /* 기존 min-width:600px 덮기 */
+    border: 0 !important;                   /* 테이블 외곽 보더 제거 */
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  /* 행을 카드처럼 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tr{ display:block !important; }
+
+  .cg-detail .sites .tbl tbody tr{
+    background:#0e1729;
+    border:1px solid #243454;               /* 카드 외곽선 */
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 셀: 라벨(왼쪽) – 값(오른쪽) */
+  .cg-detail .sites .tbl td,
+  .cg-detail .sites .tbl th{
+    display:flex !important;
+    align-items:center; justify-content:space-between;
+    gap:8px;
+    padding:6px 0 !important;               /* 타이틀 커보임 방지: 6px로 축소 */
+    border:0 !important;
+    border-bottom:1px solid #1f2937 !important;
+    color:#e6edf7 !important;
+    text-align:left;
+    word-break:break-word;
+  }
+  .cg-detail .sites .tbl tr > *:last-child{ border-bottom:0 !important; }
+
+  /* 라벨(왼쪽) — data-label이 있으면 사용, 없으면 컬럼 고정 라벨 제공 */
+  .cg-detail .sites .tbl td::before,
+  .cg-detail .sites .tbl th::before{
+    content: attr(data-label);
+    color:#9aa6bb; font-weight:600; margin-right:10px;
+  }
+  /* data-label이 비어 있거나 없는 경우의 안전 라벨(4열 가정) */
+  .cg-detail .sites .tbl tr > :nth-child(1):not([data-label])::before{ content:"유형"; }
+  .cg-detail .sites .tbl tr > :nth-child(2):not([data-label])::before{ content:"가로(m)"; }
+  .cg-detail .sites .tbl tr > :nth-child(3):not([data-label])::before{ content:"세로(m)"; }
+  .cg-detail .sites .tbl tr > :nth-child(4):not([data-label])::before{ content:"수량(면)"; }
+
+  /* 값(오른쪽) — 어떤 구조든 오른쪽 정렬 */
+  .cg-detail .sites .tbl td > *,
+  .cg-detail .sites .tbl th > *{ justify-self:end; }
+  .cg-detail .sites .tbl td{ text-align:right; }
+
+  /* 1열(사이트1/사이트2)은 '타이틀'처럼 좌측·굵게, 높이 커지지 않게 동일 패딩 유지 */
+  .cg-detail .sites .tbl tr > :nth-child(1)::before{ display:none !important; } /* 1열 라벨 숨김 */
+  .cg-detail .sites .tbl tr > :nth-child(1){
+    font-weight:700; color:#dbe4f3;
+  }
+}
+
+/* ── 태블릿/PC(>640px): 기존 표 유지 ─ */
+@media (min-width: 641px){
+  .cg-detail .sites .tbl th, .cg-detail .sites .tbl td{ padding:10px 12px; }
+}
+
+/* ── 모바일(≤640px): '사이트 구성' 표 → 카드형 + 라벨 항상 보이기 ─ */
+@media (max-width: 640px){
+
+  /* 가로 스크롤/최소폭/보더 제거(하얀 줄 차단) */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    min-width: 0 !important;
+    border: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  /* 행을 카드로 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tbody tr{ display:block !important; }
+  .cg-detail .sites .tbl tbody tr{
+    background:#0e1729;
+    border:1px solid #243454;
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 셀(라벨 왼쪽, 값 오른쪽) — tbody 안의 th/td 모두 동일 처리 */
+  .cg-detail .sites .tbl tbody th,
+  .cg-detail .sites .tbl tbody td{
+    display:flex !important;
+    align-items:center; justify-content:space-between;
+    gap:8px;
+    padding:6px 0 !important;          /* 과도한 높이 방지 */
+    line-height:1.4 !important;
+    border:0 !important;
+    border-bottom:1px solid #1f2937 !important;
+    color:#e6edf7 !important;
+    text-align:left;
+    word-break:break-word;
+  }
+  .cg-detail .sites .tbl tbody tr > *:last-child{ border-bottom:0 !important; }
+
+  /* 기본 라벨: data-label이 있으면 사용 */
+  .cg-detail .sites .tbl tbody th::before,
+  .cg-detail .sites .tbl tbody td::before{
+    content: attr(data-label);
+    color:#9aa6bb; font-weight:600; margin-right:10px;
+  }
+
+  /* data-label이 없더라도 '항상' 보이도록 고정 라벨 보강(4열 가정) */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1):not([data-label])::before{ content:"유형"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(2):not([data-label])::before{ content:"가로(m)"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(3):not([data-label])::before{ content:"세로(m)"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(4):not([data-label])::before{ content:"수량(면)"; }
+
+  /* 값(오른쪽) */
+  .cg-detail .sites .tbl tbody td > *,
+  .cg-detail .sites .tbl tbody th > *{ justify-self:end; }
+  .cg-detail .sites .tbl tbody td{ text-align:right; }
+  .cg-detail .sites .tbl tbody th{ text-align:right; } /* 일부 표에서 행머리글이 th일 수 있어 보강 */
+
+  /* 1열(사이트1/사이트2)은 카드 타이틀처럼 좌측·굵게, 라벨 숨김 + 높이 컴팩트 */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1)::before{ display:none !important; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(1){
+    font-weight:700 !important; color:#dbe4f3 !important;
+    justify-content:flex-start !important;
+    text-align:left !important;
+    padding:4px 0 6px !important;      /* 타이틀 위아래 여백 최소화 */
+    border-bottom:1px solid #243454 !important;
+  }
+
+  /* 셀 안에 p/strong 등 기본 마진 제거로 높이 축소 */
+  .cg-detail .sites .tbl tbody th > p,
+  .cg-detail .sites .tbl tbody td > p{ margin:0 !important; }
+}
+
+/* ── 태블릿/PC(>640px): 기존 표 유지 ─ */
+@media (min-width: 641px){
+  .cg-detail .sites .tbl th, .cg-detail .sites .tbl td{ padding:10px 12px; }
+}
+
+/* 모바일(≤640px): 사이트 구성 표 카드형 — 최종 교정 */
+@media (max-width: 640px){
+
+  /* 0) 테이블 바깥 하얀 줄/가로 스크롤 방지(유지) */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    min-width: 0 !important;         /* 기존 min-width:600px 무효화 */
+    border: 0 !important;            /* 테이블 외곽선 제거 */
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: transparent !important;
+  }
+
+  .cg-detail .sites .tbl thead th::before{ content:none !important; } /* ← 핵심 교정 */
+
+  /* 2) 행을 카드로 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tbody tr{ display:block !important; }
+  .cg-detail .sites .tbl tbody tr{
+    background:#0e1729;
+    border:1px solid #243454;
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 3) 셀 — 라벨(왼쪽)·값(오른쪽), tbody에만 적용 */
+  .cg-detail .sites .tbl tbody th,
+  .cg-detail .sites .tbl tbody td{
+    display:flex !important;
+    align-items:center; justify-content:space-between;
+    gap:8px;
+    padding:6px 0 !important;         /* 1열(사이트1/2)도 동일 패딩 → 과도한 높이 방지 */
+    line-height:1.4 !important;
+    border:0 !important;
+    border-bottom:1px solid #1f2937 !important;
+    color:#e6edf7 !important;
+    text-align:left;
+    word-break:break-word;
+    background: transparent !important;
+  }
+  .cg-detail .sites .tbl tbody tr > *:last-child{ border-bottom:0 !important; }
+
+  /* 4) 라벨은 tbody 셀에만 표시 */
+  .cg-detail .sites .tbl tbody th::before,
+  .cg-detail .sites .tbl tbody td::before{
+    content: attr(data-label);
+    color:#9aa6bb; font-weight:600; margin-right:10px;
+  }
+
+  /* 5) data-label이 없는 표도 '항상' 보이도록 컬럼 고정 라벨 보강(4열 가정) */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1):not([data-label])::before{ content:"유형"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(2):not([data-label])::before{ content:"가로(m)"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(3):not([data-label])::before{ content:"세로(m)"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(4):not([data-label])::before{ content:"수량(면)"; }
+
+  /* 6) 값(오른쪽) — 어떤 구조든 오른쪽 정렬 */
+  .cg-detail .sites .tbl tbody td > *,
+  .cg-detail .sites .tbl tbody th > *{ justify-self:end; }
+  .cg-detail .sites .tbl tbody td{ text-align:right; }
+  .cg-detail .sites .tbl tbody th{ text-align:right; }
+
+  /* 7) 1열(사이트1/사이트2)은 타이틀처럼 보이되, 높이는 동일하게 */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1){
+    font-weight:700 !important; color:#dbe4f3 !important;
+    justify-content:flex-start !important;
+    text-align:left !important;
+    padding:6px 0 !important;         /* 다른 셀과 동일 패딩 유지 → 높이 커지지 않음 */
+    border-bottom:1px solid #243454 !important;
+  }
+  .cg-detail .sites .tbl tbody tr > :nth-child(1)::before{
+    /* 1열에도 '유형' 라벨을 보여주려면 아래 한 줄을 주석 해제하세요 */
+    content: "" !important;            /* 기본은 타이틀만(라벨 숨김) */
+  }
+
+  /* 8) 셀 안의 p/strong 기본 마진 제거(높이 축소) */
+  .cg-detail .sites .tbl tbody th > p,
+  .cg-detail .sites .tbl tbody td > p{ margin:0 !important; }
+}
+
+/* ── 모바일(≤640px): '사이트 구성' 표 → 카드형(라벨 항상 보이기) ─ */
+@media (max-width: 640px){
+
+  /* 0) 가로 스크롤/하얀 줄 원인 제거 */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+  .cg-detail .sites .tbl{
+    width: 100% !important;
+    min-width: 0 !important;           /* 기존 min-width:600px 같은 값 무효화 */
+    border: 0 !important;              /* 테이블 외곽선 제거 → 상단 하얀 줄 차단 */
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: transparent !important;
+  }
+
+  /* 1) 헤더는 아예 숨김(시각/레이아웃 모두) — 라벨은 tbody에서만 표시 */
+  .cg-detail .sites .tbl thead{ display: none !important; }
+  .cg-detail .sites .tbl thead th::before{ content: none !important; }
+
+  /* 2) 행을 카드(블록)로 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tbody tr{ display: block !important; }
+  .cg-detail .sites .tbl tbody tr{
+    background:#0e1729;
+    border:1px solid #243454;
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 3) 셀(라벨 왼쪽, 값 오른쪽) — tbody에서만 적용 */
+  .cg-detail .sites .tbl tbody th,
+  .cg-detail .sites .tbl tbody td{
+    display:flex !important;
+    align-items:center; justify-content:space-between;
+    gap:8px;
+    padding:6px 0 !important;          /* 모든 셀 동일 패딩 → 타이틀 높이 과도 증가 방지 */
+    line-height:1.4 !important;
+    border:0 !important;
+    border-bottom:1px solid #1f2937 !important;
+    color:#e6edf7 !important;
+    text-align:left;
+    word-break:break-word;
+    background: transparent !important;
+  }
+  .cg-detail .sites .tbl tbody tr > *:last-child{ border-bottom:0 !important; }
+
+  /* 4) 라벨 — data-label이 있으면 우선 사용, 없으면 컬럼 고정 라벨로 보강(4열 가정) */
+  .cg-detail .sites .tbl tbody th::before,
+  .cg-detail .sites .tbl tbody td::before{
+    content: attr(data-label);
+    color:#9aa6bb; font-weight:600; margin-right:10px;
+  }
+  .cg-detail .sites .tbl tbody tr > :nth-child(1):not([data-label])::before{ content:"유형"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(2):not([data-label])::before{ content:"가로(m)"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(3):not([data-label])::before{ content:"세로(m)"; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(4):not([data-label])::before{ content:"수량(면)"; }
+
+  /* 5) 값은 오른쪽 정렬 느낌 */
+  .cg-detail .sites .tbl tbody td{ text-align:right; }
+  .cg-detail .sites .tbl tbody th{ text-align:right; }
+  .cg-detail .sites .tbl tbody td > *,
+  .cg-detail .sites .tbl tbody th > *{ justify-self:end; }
+
+  /* 6) 1열(사이트1/사이트2)은 ‘타이틀’처럼 보이되, 높이는 동일하게 */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1){
+    font-weight:700 !important; color:#dbe4f3 !important;
+    justify-content:flex-start !important; text-align:left !important;
+    padding:6px 0 !important;            /* 다른 셀과 동일 패딩 유지 */
+    border-bottom:1px solid #243454 !important;
+  }
+  /* 1열에도 ‘유형’ 라벨을 함께 보이고 싶지 않으면 아래 한 줄을 유지(라벨 숨김). 
+     보이고 싶다면 이 줄을 주석 처리하세요. */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1)::before{ content:"" !important; }
+
+  /* 7) 셀 내부 p 등의 기본 마진 제거(미세 높이 축소) */
+  .cg-detail .sites .tbl tbody th > p,
+  .cg-detail .sites .tbl tbody td > p{ margin:0 !important; }
+}
+
+/* ── 모바일: '사이트 구성' 표 카드형(라벨+값 모두 보이기) ─ */
+@media (max-width: 640px){
+
+  /* 하얀 줄/가로 스크롤 원인 제거 */
+  .cg-detail .sites .tbl-wrap{ overflow: visible !important; }
+  .cg-detail .sites .tbl{
+    width:100% !important;
+    min-width:0 !important;             /* 기존 min-width:600px 무효화 */
+    border:0 !important;                /* 테이블 외곽선 제거 */
+    border-collapse:separate !important;
+    border-spacing:0 !important;
+    background:transparent !important;
+  }
+
+  /* thead는 완전 숨김(라벨은 tbody에서만 표시) */
+  .cg-detail .sites .tbl thead{ display:none !important; }
+  .cg-detail .sites .tbl thead th::before{ content:none !important; }
+
+  /* 행을 카드로 */
+  .cg-detail .sites .tbl tbody,
+  .cg-detail .sites .tbl tbody tr{ display:block !important; }
+  .cg-detail .sites .tbl tbody tr{
+    background:#0e1729;
+    border:1px solid #243454;
+    border-radius:10px;
+    padding:8px 10px;
+    margin-bottom:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+
+  /* 셀: 라벨(왼쪽) + 값(오른쪽) — tbody만 대상 */
+  .cg-detail .sites .tbl tbody th,
+  .cg-detail .sites .tbl tbody td{
+    display:flex !important;
+    align-items:center; justify-content:space-between;
+    gap:8px;
+    padding:6px 0 !important;          /* 모든 셀 동일 → 1열 높이 과증가 방지 */
+    line-height:1.35 !important;
+    border:0 !important;
+    border-bottom:1px solid #1f2937 !important;
+    color:#e6edf7 !important;
+    text-align:left;
+    word-break:break-word;
+    background:transparent !important;
+  }
+  .cg-detail .sites .tbl tbody tr > *:last-child{ border-bottom:0 !important; }
+
+  /* 라벨 — data-label 우선, 없으면 고정 라벨(4열 가정)로 보강 */
+  .cg-detail .sites .tbl tbody th::before,
+  .cg-detail .sites .tbl tbody td::before{
+    content: attr(data-label) !important;
+    color:#9aa6bb; font-weight:600; margin-right:10px;
+  }
+  .cg-detail .sites .tbl tbody tr > :nth-child(1):not([data-label])::before,
+  .cg-detail .sites .tbl tbody tr > :nth-child(1)[data-label=""]::before{ content:"유형" !important; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(2):not([data-label])::before,
+  .cg-detail .sites .tbl tbody tr > :nth-child(2)[data-label=""]::before{ content:"가로(m)" !important; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(3):not([data-label])::before,
+  .cg-detail .sites .tbl tbody tr > :nth-child(3)[data-label=""]::before{ content:"세로(m)" !important; }
+  .cg-detail .sites .tbl tbody tr > :nth-child(4):not([data-label])::before,
+  .cg-detail .sites .tbl tbody tr > :nth-child(4)[data-label=""]::before{ content:"수량(면)" !important; }
+
+  /* 값 정렬(오른쪽) */
+  .cg-detail .sites .tbl tbody td{ text-align:right; }
+  .cg-detail .sites .tbl tbody th{ text-align:right; }
+  .cg-detail .sites .tbl tbody td > *,
+  .cg-detail .sites .tbl tbody th > *{ justify-self:end; }
+
+  /* 1열(사이트1/사이트2): 라벨도 보이고(유형), 값은 굵게/좌측 정렬만 살짝 */
+  .cg-detail .sites .tbl tbody tr > :nth-child(1){
+    font-weight:700 !important; color:#dbe4f3 !important;
+    justify-content:space-between !important;  /* '유형 | 사이트1' 형태 유지 */
+    text-align:left !important;
+    padding:6px 0 !important;
+    border-bottom:1px solid #243454 !important;
+  }
+
+  /* p 등 기본 마진 제거(높이 축소) */
+  .cg-detail .sites .tbl tbody th > p,
+  .cg-detail .sites .tbl tbody td > p{ margin:0 !important; }
+}
+
+/* 테이블(사이트 구성) 하단 여백 제거 */
+.cg-detail .sites .tbl { margin-bottom: 0 !important; }
+
+/* 모바일 카드형: 마지막 카드의 아래 여백/보더도 제거 */
+@media (max-width: 640px){
+  .cg-detail .sites .tbl tbody tr:last-child { margin-bottom: 0 !important; }
+  .cg-detail .sites .tbl tbody tr:last-child > *:last-child { border-bottom: 0 !important; }
+}
+
+/* (선택) 섹션 자체의 하단 여백까지 완전히 밀착하고 싶을 때 */
+.cg-detail .sites { margin-bottom: 0 !important; }         /* 섹션 바깥 여백 제거 */
+.cg-detail .sites .tbl-wrap { padding-bottom: 0 !important; } /* 래퍼 바닥 패딩 제거(있을 경우) */
