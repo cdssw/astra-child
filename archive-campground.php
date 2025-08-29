@@ -250,15 +250,17 @@ $archive_link = get_post_type_archive_link('campground');
     <?php
     // 페이징: 필터 유지
     the_posts_pagination(array(
-      'mid_size'  => 1,
-      'prev_text' => '이전',
-      'next_text' => '다음',
-      'screen_reader_text' => '페이지 네비게이션',
-      'add_args'  => array_filter(array(
-        'region'     => $region_final,
-        'region_do'  => $cur_do,
-        'region_si'  => $cur_si,
-        'camp_theme' => $cur_theme,
+      'mid_size'           => 1,     // 현재 페이지 양옆 1개씩만
+      'end_size'           => 1,     // 처음·끝 1개
+      'prev_text'          => '‹',   // 이전 ← 화살표
+      'next_text'          => '›',   // 다음 → 화살표
+      'screen_reader_text' => '',    // SR용 텍스트(시각 표시는 감춤)
+      'add_args'           => array_filter(array(
+        'region'     => $region_final ?? '',
+        'region_do'  => $cur_do ?? '',
+        'region_si'  => $cur_si ?? '',
+        'camp_theme' => $cur_theme ?? '',
+        'pet'        => $cur_pet ?? '',
       )),
     ));
     ?>
