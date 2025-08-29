@@ -2211,3 +2211,30 @@ body.search   .notfound-search input:-webkit-autofill{
 /* (선택) 섹션 자체의 하단 여백까지 완전히 밀착하고 싶을 때 */
 .cg-detail .sites { margin-bottom: 0 !important; }         /* 섹션 바깥 여백 제거 */
 .cg-detail .sites .tbl-wrap { padding-bottom: 0 !important; } /* 래퍼 바닥 패딩 제거(있을 경우) */
+
+/* 칩 그리드 기본(데스크톱/태블릿)은 기존 유지 */
+.home-grid .grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap:10px;
+}
+
+/* 아이폰 15(393px) 등 좁은 모바일에선 칩을 2열로 강제 */
+@media (max-width: 480px){
+  .home-grid .grid{
+    grid-template-columns: repeat(2, minmax(150px, 1fr)); /* 150*2 + 10(gap)=310 → 360~400대 안전 */
+  }
+  /* 칩 텍스트가 길 때 2줄까지 허용(잘림 방지) */
+  .home-grid .card.pill{
+    min-height: 44px;                 /* 터치 타깃 확보 */
+    padding: 10px 12px;
+    white-space: normal;               /* 줄바꿈 허용 */
+    word-break: keep-all;              /* 한글 단어 단위 줄바꿈 */
+    text-align: center;
+  }
+}
+
+/* 아주 작은 기기(≤340px)는 1열로 자동 복귀(깨짐 방지) */
+@media (max-width: 340px){
+  .home-grid .grid{ grid-template-columns: 1fr; }
+}
