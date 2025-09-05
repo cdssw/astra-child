@@ -823,88 +823,439 @@ if (defined('WP_CLI') && WP_CLI) {
   });
 }
 
-// 전화번호 포맷 → tel: 링크용(숫자만)
-function cg_tel_href($s)
-{
-  $d = preg_replace('/[^0-9+]/', '', (string)$s);
-  return $d ? 'tel:' . $d : '';
+// 안전 tel: 링크 변환
+if (!function_exists('cg_tel_href')) {
+  function cg_tel_href($s)
+  {
+    $d = preg_replace('/[^0-9+]/', '', (string)$s);
+    return $d ? 'tel:' . $d : '';
+  }
 }
 
-// 단일 캠핑장 본문에 연락처/홈페이지 블록 주입
-add_filter('the_content', function ($content) {
-  if (!is_singular('campground') || !in_the_loop() || !is_main_query()) return $content;
+// 대표 이미지/외부 원본을 본문 상단에 넣을 블록 생성
+function cg_build_image_block($post_id)
+{
+  // 대표 이미지가 있으면 그걸 사용
+  if (has_post_thumbnail($post_id)) {
+    $img = wp_get_attachment_image_src(get_post_thumbnail_id($post_id), 'large');
+    if ($img && !empty($img[0])) {
+      $alt = get_the_title($post_id);
+      return '<figure class="cg-hero" style="margin:0 0 16px 0;"><img src="' . esc_url($img[0]) . '" alt="' . esc_attr($alt) . '" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;"></figure>';
+    }
+  }
+  // 대표 이미지 없으면 고캠핑 원본(_image_original) 폴백
+  $ext = get_post_meta($post_id, '_image_original', true);
+  if ($ext) {
+    $alt = get_the_title($post_id);
+    return '<figure class="cg-hero" style="margin:0 0 16px 0;"><img src="' . esc_url($ext) . '" alt="' . esc_attr($alt) . '" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;"></figure>';
+  }
+  return '';
+}
 
-  $pid  = get_the_ID();
-  $tel  = get_post_meta($pid, 'phone', true);
-  $home = get_post_meta($pid, 'homepage', true);
+// “핵심 정보” 블록 생성(주소·전화·홈페이지·인허가일 등)
+function cg_build_keyinfo_block($post_id)
+{
+  $addr = get_post_meta($post_id, 'address', true);
+  if (!$addr) $addr = get_post_meta($post_id, 'address_gc', true); // 고캠핑 보강 주소 폴백
+  $tel  = get_post_meta($post_id, 'phone', true);
+  $home = get_post_meta($post_id, 'homepage', true);
 
-  // 아무 값도 없으면 원본 그대로
-  if (!$tel && !$home) return $content;
+  // 인허가일 유연 탐색(있을 때만 표시)
+  $permit = '';
+  foreach (['permit_date', 'approval_date', 'lic_date', '인허가일'] as $k) {
+    $v = trim((string)get_post_meta($post_id, $k, true));
+    if ($v) {
+      $permit = $v;
+      break;
+    }
+  }
 
-  // 블록 HTML(기존 톤 유지: badge/btn-ghost 활용)
+  // 값이 하나도 없으면 블록 자체를 만들지 않음
+  if (!$addr && !$tel && !$home && !$permit) return '';
+
   ob_start(); ?>
-  <section class="cg-contact" aria-label="연락처">
-    <ul class="spec" style="list-style:none; padding:0; margin:8px 0;">
+  <section class="key-info" aria-label="핵심 정보" style="margin:0 0 16px 0;">
+    <h2 class="sec-title">핵심 정보</h2>
+    <ul class="spec">
+      <?php if ($addr): ?>
+        <li class="spec-item">
+          <span class="k">주소</span>
+          <span class="v"><?php echo esc_html($addr); ?></span>
+        </li>
+      <?php endif; ?>
       <?php if ($tel): ?>
-        <li style="display:flex; justify-content:space-between; padding:4px 0;">
+        <li class="spec-item">
           <span class="k">전화</span>
-          <span class="v"><a href="<?php echo esc_attr(cg_tel_href($tel)); ?>" class="badge" aria-label="전화 걸기"><?php echo esc_html($tel); ?></a></span>
+          <span class="v"><a href="<?php echo esc_attr(cg_tel_href($tel)); ?>"><?php echo esc_html($tel); ?></a></span>
         </li>
       <?php endif; ?>
       <?php if ($home): ?>
-        <li style="display:flex; justify-content:space-between; padding:4px 0;">
+        <li class="spec-item">
           <span class="k">홈페이지</span>
-          <span class="v"><a href="<?php echo esc_url($home); ?>" class="badge" target="_blank" rel="noopener">바로가기</a></span>
+          <span class="v"><a href="<?php echo esc_url($home); ?>" target="_blank" rel="noopener">바로가기</a></span>
+        </li>
+      <?php endif; ?>
+      <?php if ($permit): ?>
+        <li class="spec-item">
+          <span class="k">인허가일</span>
+          <span class="v"><?php echo esc_html($permit); ?></span>
         </li>
       <?php endif; ?>
     </ul>
   </section>
 <?php
-  $block = ob_get_clean();
+  return ob_get_clean();
+}
 
-  // 기본: 본문 맨 위에 연락처 블록 삽입
-  return $block . $content;
-}, 11);
+// 본문 재구성(상단 이미지 + 핵심 정보 + 기존 본문)
+function cg_rebuild_content($post_id, $opts = [])
+{
+  $opts = wp_parse_args($opts, [
+    'include_image' => true,   // 상단 이미지 블록 포함
+    'prepend_only'  => true,   // 기존 본문은 그대로 두고 앞에만 붙임
+  ]);
+  $old = get_post_field('post_content', $post_id);
 
-add_action('wp_footer', function () {
-  if (!is_singular('campground')) return; ?>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var wrap = document.querySelector('.cg-detail .cg-map-wrap');
-      if (!wrap) return;
-      var bar = wrap.querySelector('.map-actionbar');
-      if (!bar) {
-        bar = document.createElement('div');
-        bar.className = 'map-actionbar';
-        bar.innerHTML = '<div class="left"></div><div class="right"></div>';
-        wrap.appendChild(bar);
+  $parts = [];
+  if ($opts['include_image']) {
+    $img = cg_build_image_block($post_id);
+    if ($img) $parts[] = $img;
+  }
+  $parts[] = cg_build_keyinfo_block($post_id);
+
+  // 기존 본문 유지(앞에 핵심 정보만 프리펜드)
+  if ($opts['prepend_only']) {
+    $parts[] = $old;
+  }
+  $new = trim(implode("\n\n", array_filter($parts)));
+
+  // 만약 prepend_only=false 라면, 필요 시 old를 뒤에 합치지 않고 템플릿만 사용 가능
+  return $new ?: $old;
+}
+
+// WP‑CLI: 전 건 재임포트
+if (defined('WP_CLI') && WP_CLI) {
+  /**
+   * 캠핑장 본문 재임포트(상단 이미지 + 핵심 정보 + 기존 본문 유지)
+   * 사용:
+   *  - wp cg reimport-content --all
+   *  - wp cg reimport-content --ids=12,34,56
+   *  - wp cg reimport-content --no-image (이미지 블록 생략)
+   *  - wp cg reimport-content --replace (기존 본문 무시하고 템플릿만 사용)
+   *  - wp cg reimport-content --dry-run (미리보기만)
+   */
+  WP_CLI::add_command('cg reimport-content', function ($args, $assoc) {
+    $ids = [];
+    if (!empty($assoc['ids'])) {
+      $ids = array_map('intval', explode(',', $assoc['ids']));
+    } else {
+      if (empty($assoc['all'])) WP_CLI::error('사용법: --all 또는 --ids=1,2,3');
+      $ids = get_posts(['post_type' => 'campground', 'posts_per_page' => -1, 'fields' => 'ids', 'post_status' => 'any']);
+    }
+
+    $include_image = !isset($assoc['no-image']);
+    $prepend_only  = !isset($assoc['replace']);
+    $dry           = isset($assoc['dry-run']);
+
+    $n = 0;
+    foreach ($ids as $pid) {
+      $new = cg_rebuild_content($pid, [
+        'include_image' => $include_image,
+        'prepend_only'  => $prepend_only,
+      ]);
+      if ($dry) {
+        $len = mb_strlen(wp_strip_all_tags($new));
+        WP_CLI::log("DRY #{$pid}: length={$len}");
+        continue;
       }
-      var left = bar.querySelector('.left');
-      // 메타 값을 data-*로 전달하지 않았으니, 상세 블록에서 읽어와 링크 생성
-      var telEl = document.querySelector('.cg-contact .k')?.textContent === '전화' ?
-        document.querySelector('.cg-contact a[href^="tel:"]') : null;
-      var homeEl = document.querySelector('.cg-contact .k')?.textContent === '전화' ?
-        document.querySelector('.cg-contact').querySelector('a[target="_blank"]') :
-        document.querySelector('.cg-contact').querySelector('a[target="_blank"]');
-      // 전화 버튼
-      if (telEl) {
-        var telBtn = document.createElement('a');
-        telBtn.className = 'btn-ghost';
-        telBtn.href = telEl.getAttribute('href');
-        telBtn.textContent = '전화하기';
-        left.appendChild(telBtn);
+      wp_update_post(['ID' => $pid, 'post_content' => $new], true);
+      if (is_wp_error($e = wp_update_post(['ID' => $pid, 'post_content' => $new], true))) {
+        WP_CLI::warning("FAIL #{$pid}: " . $e->get_error_message());
+      } else {
+        $n++;
       }
-      // 홈페이지 버튼
-      var hp = document.querySelector('.cg-contact a[target="_blank"]');
-      if (hp) {
-        var homeBtn = document.createElement('a');
-        homeBtn.className = 'btn-ghost';
-        homeBtn.href = hp.href;
-        homeBtn.target = '_blank';
-        homeBtn.rel = 'noopener';
-        homeBtn.textContent = '홈페이지';
-        left.appendChild(homeBtn);
+      usleep(80000); // 0.08s 살짝 딜레이(안정성)
+    }
+    WP_CLI::success("재임포트 완료: {$n}건");
+  });
+}
+// 절대 URL 판별
+function cg_is_abs_url($u)
+{
+  return is_string($u) && preg_match('#^https?://#i', $u);
+}
+
+// Referer를 붙여 파일을 받아 임시 파일로 저장(성공 시 임시 경로 반환)
+function cg_download_with_referer($url, $referer = 'https://gocamping.or.kr/')
+{
+  if (!cg_is_abs_url($url)) return new WP_Error('bad_url', 'URL이 절대경로가 아닙니다.');
+  $tmp = wp_tempnam($url);
+  if (!$tmp) return new WP_Error('tmp_fail', '임시 파일 생성 실패');
+
+  $res = wp_remote_get($url, array(
+    'timeout'  => 20,
+    'stream'   => true,
+    'filename' => $tmp,
+    'headers'  => array('Referer' => $referer),
+  ));
+  if (is_wp_error($res)) {
+    @unlink($tmp);
+    return $res;
+  }
+  $code = wp_remote_retrieve_response_code($res);
+  if ($code !== 200) {
+    @unlink($tmp);
+    return new WP_Error('http_' . $code, '다운로드 실패: ' . $code);
+  }
+  return $tmp;
+}
+
+// 외부 URL을 내려받아 대표 이미지로 설정(Referer 포함)
+function cg_set_featured_from_url_strict($post_id, $url)
+{
+  if (has_post_thumbnail($post_id)) return true; // 이미 대표 이미지 있음
+  $tmp = cg_download_with_referer($url);
+  if (is_wp_error($tmp)) return false;
+
+  $file_array = array(
+    'name'     => basename(parse_url($url, PHP_URL_PATH)) ?: 'image.jpg',
+    'tmp_name' => $tmp,
+  );
+  $attach_id = media_handle_sideload($file_array, $post_id);
+  if (is_wp_error($attach_id)) {
+    @unlink($tmp);
+    return false;
+  }
+
+  set_post_thumbnail($post_id, $attach_id);
+  if (!get_post_meta($post_id, '_image_source', true))  update_post_meta($post_id, '_image_source', '고캠핑(한국관광공사)');
+  if (!get_post_meta($post_id, '_image_license', true)) update_post_meta($post_id, '_image_license', '출처표시');
+  if (!get_post_meta($post_id, '_image_original', true)) update_post_meta($post_id, '_image_original', esc_url_raw($url));
+  return true;
+}
+
+// 본문 상단 히어로: 대표 이미지 우선, 외부 URL은 절대경로일 때만 사용
+function cg_build_hero_img_html($post_id)
+{
+  if (has_post_thumbnail($post_id)) {
+    $src = wp_get_attachment_image_url(get_post_thumbnail_id($post_id), 'large');
+    if ($src) return '<figure class="cg-hero" style="margin:0 0 16px 0;"><img src="' . esc_url($src) . '" alt="' . esc_attr(get_the_title($post_id)) . '" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;"></figure>';
+  }
+  $ext = trim((string)get_post_meta($post_id, '_image_original', true));
+  if ($ext !== '' && preg_match('#^https?://#i', $ext)) {
+    // 브라우저 직접 호출은 안티핫링크에 막힐 수 있으므로, 여기서는 미리 대표 이미지로 내려받는 걸 권장
+    return ''; // 히어로에서는 직접 외부 URL을 쓰지 않음(깨짐 방지)
+  }
+  return '';
+}
+
+// 절대 URL 판별
+if (!function_exists('cg_is_abs_url')) {
+  function cg_is_abs_url($u)
+  {
+    return is_string($u) && preg_match('#^https?://#i', $u);
+  }
+}
+
+// Referer 포함 다운로드 → 대표 이미지 설정(안티핫링크 회피)
+if (!function_exists('cg_download_with_referer')) {
+  function cg_download_with_referer($url, $referer = 'https://gocamping.or.kr/')
+  {
+    if (!cg_is_abs_url($url)) return new WP_Error('bad_url', 'URL이 절대경로가 아닙니다.');
+    $tmp = wp_tempnam($url);
+    if (!$tmp) return new WP_Error('tmp_fail', '임시 파일 생성 실패');
+    $res = wp_remote_get($url, [
+      'timeout' => 20,
+      'stream' => true,
+      'filename' => $tmp,
+      'headers' => ['Referer' => $referer],
+    ]);
+    if (is_wp_error($res)) {
+      @unlink($tmp);
+      return $res;
+    }
+    $code = wp_remote_retrieve_response_code($res);
+    if ($code !== 200) {
+      @unlink($tmp);
+      return new WP_Error('http_' . $code, '다운로드 실패: ' . $code);
+    }
+    return $tmp;
+  }
+}
+
+if (!function_exists('cg_set_featured_from_url_strict')) {
+  function cg_set_featured_from_url_strict($post_id, $url)
+  {
+    $tmp = cg_download_with_referer($url);
+    if (is_wp_error($tmp)) return false;
+    $file_array = ['name' => basename(parse_url($url, PHP_URL_PATH)) ?: 'image.jpg', 'tmp_name' => $tmp];
+    $attach_id = media_handle_sideload($file_array, $post_id);
+    if (is_wp_error($attach_id)) {
+      @unlink($tmp);
+      return false;
+    }
+    set_post_thumbnail($post_id, $attach_id);
+    if (!get_post_meta($post_id, '_image_source', true))  update_post_meta($post_id, '_image_source', '고캠핑(한국관광공사)');
+    if (!get_post_meta($post_id, '_image_license', true)) update_post_meta($post_id, '_image_license', '출처표시');
+    if (!get_post_meta($post_id, '_image_original', true)) update_post_meta($post_id, '_image_original', esc_url_raw($url));
+    return true;
+  }
+}
+// 절대 URL 판별
+if (!function_exists('cg_is_abs_url')) {
+  function cg_is_abs_url($u)
+  {
+    return is_string($u) && preg_match('#^https?://#i', $u);
+  }
+}
+
+// Referer 포함 다운로드 → 대표 이미지 설정(안티핫링크 회피)
+if (!function_exists('cg_download_with_referer')) {
+  function cg_download_with_referer($url, $referer = 'https://gocamping.or.kr/')
+  {
+    if (!cg_is_abs_url($url)) return new WP_Error('bad_url', 'URL이 절대경로가 아닙니다.');
+    $tmp = wp_tempnam($url);
+    if (!$tmp) return new WP_Error('tmp_fail', '임시 파일 생성 실패');
+    $res = wp_remote_get($url, [
+      'timeout' => 20,
+      'stream' => true,
+      'filename' => $tmp,
+      'headers' => ['Referer' => $referer],
+    ]);
+    if (is_wp_error($res)) {
+      @unlink($tmp);
+      return $res;
+    }
+    $code = wp_remote_retrieve_response_code($res);
+    if ($code !== 200) {
+      @unlink($tmp);
+      return new WP_Error('http_' . $code, '다운로드 실패: ' . $code);
+    }
+    return $tmp;
+  }
+}
+
+if (!function_exists('cg_set_featured_from_url_strict')) {
+  function cg_set_featured_from_url_strict($post_id, $url)
+  {
+    $tmp = cg_download_with_referer($url);
+    if (is_wp_error($tmp)) return false;
+    $file_array = ['name' => basename(parse_url($url, PHP_URL_PATH)) ?: 'image.jpg', 'tmp_name' => $tmp];
+    $attach_id = media_handle_sideload($file_array, $post_id);
+    if (is_wp_error($attach_id)) {
+      @unlink($tmp);
+      return false;
+    }
+    set_post_thumbnail($post_id, $attach_id);
+    if (!get_post_meta($post_id, '_image_source', true))  update_post_meta($post_id, '_image_source', '고캠핑(한국관광공사)');
+    if (!get_post_meta($post_id, '_image_license', true)) update_post_meta($post_id, '_image_license', '출처표시');
+    if (!get_post_meta($post_id, '_image_original', true)) update_post_meta($post_id, '_image_original', esc_url_raw($url));
+    return true;
+  }
+}
+
+// WP‑CLI: _image_original(등)에서 내려받아 대표 이미지로 설정
+if (defined('WP_CLI') && WP_CLI) {
+  WP_CLI::add_command('cg hero-from-meta', function ($args, $assoc) {
+    $ids = [];
+    if (!empty($assoc['ids'])) {
+      $ids = array_map('intval', explode(',', $assoc['ids']));
+    } else {
+      if (empty($assoc['all'])) WP_CLI::error('사용법: --all 또는 --ids=1,2');
+      $ids = get_posts(['post_type' => 'campground', 'posts_per_page' => -1, 'fields' => 'ids', 'post_status' => 'any']);
+    }
+
+    // 우선순위: 옵션으로 지정된 키가 있으면 최우선
+    $keys = !empty($assoc['meta-key'])
+      ? [$assoc['meta-key']]
+      : ['_image_original', 'image_original', 'firstImageUrl', 'firstImageUrl2'];
+
+    $force = !empty($assoc['force']);
+    $done = 0;
+    $skip = 0;
+    $fail = 0;
+
+    foreach ($ids as $pid) {
+      if (has_post_thumbnail($pid) && !$force) {
+        $skip++;
+        continue;
       }
-    });
-  </script>
-<?php });
+
+      // 메타키 순회로 첫 유효 URL 선택
+      $url = '';
+      foreach ($keys as $k) {
+        $u = trim((string)get_post_meta($pid, $k, true));
+        if ($u !== '') {
+          $url = $u;
+          break;
+        }
+      }
+      if (!cg_is_abs_url($url)) {
+        $skip++;
+        continue;
+      }
+
+      $ok = cg_set_featured_from_url_strict($pid, $url);
+      if ($ok) $done++;
+      else $fail++;
+      usleep(80000);
+    }
+    WP_CLI::success("대표 이미지 설정: 성공 {$done}, 건너뜀 {$skip}, 실패 {$fail}");
+  });
+}
+
+// cg normalize: 본문 상단에 대표 이미지(히어로) 1장만 안전하게 붙이는 커맨드
+if (defined('WP_CLI') && WP_CLI) {
+  WP_CLI::add_command('cg normalize', function ($args, $assoc) {
+    // 대상 ID 결정
+    if (!empty($assoc['ids'])) {
+      $ids = array_map('intval', explode(',', $assoc['ids']));
+    } else {
+      if (empty($assoc['all'])) WP_CLI::error('사용법: --all 또는 --ids=1,2');
+      $ids = get_posts(['post_type' => 'campground', 'posts_per_page' => -1, 'fields' => 'ids', 'post_status' => 'any']);
+    }
+
+    $updated = 0;
+    $skipped = 0;
+    foreach ($ids as $pid) {
+      // 현재 본문 가져오기
+      $html = get_post_field('post_content', $pid);
+
+      // 1) 이전에 넣었을 수 있는 our hero(figure.cg-hero) 제거(중복 방지)
+      $removed = 0;
+      $html = preg_replace('#<figure[^>]*class="[^"]*\bcg-hero\b[^"]*"[^>]*>.*?</figure>#is', '', $html, -1, $removed);
+
+      // 2) 대표 이미지가 있을 때만 히어로 준비
+      $prepend = '';
+      if (has_post_thumbnail($pid)) {
+        $src = wp_get_attachment_image_url(get_post_thumbnail_id($pid), 'large');
+        if ($src) {
+          // 이미 본문이 이미지/figure로 시작하면 추가하지 않음
+          $starts_with_img = (bool)preg_match('#^\s*<(figure|img)\b#i', ltrim($html));
+          if (!$starts_with_img) {
+            $alt = esc_attr(get_the_title($pid));
+            $img = '<figure class="cg-hero" style="margin:0 0 16px 0;"><img src="' . esc_url($src) . '" alt="' . $alt . '" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;"></figure>';
+            $prepend = $img . "\n\n";
+          }
+        }
+      }
+
+      // 3) 갱신 필요 없으면 스킵
+      if (!$removed && $prepend === '') {
+        $skipped++;
+        continue;
+      }
+
+      // 4) 저장
+      $new = $prepend . $html;
+      $res = wp_update_post(['ID' => $pid, 'post_content' => $new], true);
+      if (is_wp_error($res)) {
+        WP_CLI::warning("FAIL #{$pid}: " . $res->get_error_message());
+      } else {
+        $updated++;
+      }
+      usleep(60000);
+    }
+    WP_CLI::success("정규화: 갱신 {$updated}, 건너뜀 {$skipped}");
+  });
+}

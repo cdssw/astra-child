@@ -1,0 +1,32 @@
+<figure class="cg-hero" style="margin:0 0 16px 0;"><img src="http://localhost:8000/wp-content/uploads/2025/08/thumb_720_3341ilS9tvjctjnLIarDtzo9.jpg" alt="김천부항댐 산내들 오토캠핑장" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;"></figure>
+
+
+
+<section class="cg-detail" aria-label="캠핑장 상세">
+  <header class="hd">
+    <div class="hd-row">
+      <h1 class="title">김천부항댐 산내들 오토캠핑장</h1>
+      <a class="btn-ghost btn-back" href="/camping/">← 목록으로</a>
+    </div>
+    <div class="loc"><strong>경상북도 김천시</strong> · 경상북도 김천시 지례면 도곡리 722</div>
+    <div class="badges">
+      <div class="badges-list"><span class="badge type-auto">자동차야영장 <b>52</b></span><span class="badge ok">반려동물 동반</span></div>
+      <div class="badges-actions"><a class="btn-ghost open-map" href="https://map.kakao.com/link/search/%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B9%80%EC%B2%9C%EC%8B%9C%20%EC%A7%80%EB%A1%80%EB%A9%B4%20%EB%8F%84%EA%B3%A1%EB%A6%AC%20722" target="_self" rel="noopener">지도 크게 보기</a></div>
+    </div>
+  </header>
+
+  <div class="cg-map-wrap">
+    <div id="cg-map" class="cg-map" data-lat="35.977977" data-lng="128.0108301" data-address="경상북도 김천시 지례면 도곡리 722"></div>
+  </div>
+
+  <div class="content"><p>반려동물 동반이 가능합니다. 기본 편의시설(전기·온수)을 제공합니다.</p></div>
+
+  <section class="chips"><h3 class="chips-title">시설</h3><div class="chip-line"><span class="badge theme">전기</span><span class="badge theme">온수</span><span class="badge theme">물놀이장</span><span class="badge theme">산책로</span><span class="badge theme">운동장</span></div><h3 class="chips-title">주변</h3><div class="chip-line"><span class="badge">계곡 물놀이</span><span class="badge">낚시</span><span class="badge">어린이놀이시설</span></div></section>
+
+  <section class="info">
+    <h2>핵심 정보</h2>
+    <ul class="spec"><li><span class="k">주소</span><span class="v">경상북도 김천시 지례면 도곡리 722</span></li><li><span class="k">화로대</span><span class="v">개별</span></li><li><span class="k">인허가일</span><span class="v">2014.9.1</span></li><li><span class="k">안전설비</span><span class="v">소화기 28 · 방화수 1 · 방화사 3</span></li><li class="spec-item"><span class="k">전화</span><span class="v"><a href="tel:0544312011">054-431-2011</a></span></li><li class="spec-item"><span class="k">홈페이지</span><span class="v"><a href="https://www.gc.go.kr/sannaedeul/main.do" target="_blank" rel="noopener">바로가기</a></span></li></ul>
+  </section>
+
+  <section class="sites"><h2>사이트 구성</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>유형</th><th>가로(m)</th><th>세로(m)</th><th>수량(면)</th></tr></thead><tbody><tr><td>사이트1</td><td>12</td><td>10</td><td>52</td></tr></tbody></table></div></section>
+</section>
