@@ -616,3 +616,295 @@ add_action('wp_footer', function () {
     });
   </script>
 <?php }, 99);
+
+// 캠핑장(CPT: campground) 목록에 ID 열 표시
+add_filter('manage_edit-campground_columns', function ($cols) {
+  // 첫 번째 열 뒤에 ID 넣기
+  $new = [];
+  $i = 0;
+  foreach ($cols as $key => $label) {
+    $new[$key] = $label;
+    if ($i === 0) $new['cg_id'] = 'ID';
+    $i++;
+  }
+  return $new;
+});
+add_action('manage_campground_posts_custom_column', function ($col, $post_id) {
+  if ($col === 'cg_id') echo (int)$post_id;
+}, 10, 2);
+// 너비 살짝 조정(선택)
+add_action('admin_head', function () {
+  echo '<style>.post-type-campground .column-cg_id{width:80px}</style>';
+});
+
+/* 고캠핑 서비스키(반드시 URL 인코딩된 값) */
+if (!defined('GOCAMPING_SERVICE_KEY')) {
+  // 예) define('GOCAMPING_SERVICE_KEY', rawurlencode('발급받은원문키'));
+  define('GOCAMPING_SERVICE_KEY', rawurlencode('35030fc12be6b9c642a0a7a35cf99d02d99d60bb23925748b360b63eb357014f')); // data.go.kr에서 발급, URL-encoded
+}
+
+/* 1) 전수 목록 페이지 호출 (기본목록 basedList) */
+function gc_fetch_based_list($page = 1, $rows = 1000)
+{
+  $base = 'https://apis.data.go.kr/B551011/GoCamping/basedList';
+  $qs = http_build_query(array(
+    'serviceKey' => GOCAMPING_SERVICE_KEY,
+    'MobileOS'   => 'ETC',
+    'MobileApp'  => 'camp-sync',
+    '_type'      => 'json',
+    'numOfRows'  => $rows,
+    'pageNo'     => $page,
+  ));
+  $url = $base . '?' . $qs;
+
+  $res = wp_remote_get($url, array('timeout' => 20));
+  if (is_wp_error($res)) return array(null, 0, 'HTTP_ERROR');
+
+  $body = wp_remote_retrieve_body($res);
+  $json = json_decode($body, true);
+  if (!$json || empty($json['response']['body'])) return array(null, 0, 'EMPTY');
+
+  $body = $json['response']['body'];
+  $items = $body['items']['item'] ?? array();
+  $total = intval($body['totalCount'] ?? 0);
+  return array($items, $total, null);
+}
+
+/* 2) Haversine (km) */
+function gc_haversine_km($lat1, $lng1, $lat2, $lng2)
+{
+  $R = 6371;
+  $dLat = deg2rad($lat2 - $lat1);
+  $dLng = deg2rad($lng2 - $lng1);
+  $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+  return $R * (2 * atan2(sqrt($a), sqrt(1 - $a)));
+}
+
+/* 3) 원격 이미지 → 대표 이미지 설정 */
+function gc_set_featured_from_url($post_id, $image_url, $source = '', $license = '')
+{
+  if (!$image_url) return false;
+  $tmp = download_url($image_url);
+  if (is_wp_error($tmp)) return false;
+
+  $file_array = array(
+    'name'     => basename(parse_url($image_url, PHP_URL_PATH)),
+    'tmp_name' => $tmp,
+  );
+  $attach_id = media_handle_sideload($file_array, $post_id);
+  if (is_wp_error($attach_id)) {
+    @unlink($tmp);
+    return false;
+  }
+
+  set_post_thumbnail($post_id, $attach_id);
+  if ($source)  update_post_meta($post_id, '_image_source',   $source);
+  if ($license) update_post_meta($post_id, '_image_license',  $license);
+  update_post_meta($post_id, '_image_original', esc_url_raw($image_url));
+  return true;
+}
+
+/* 4) 이름 유사도(간단 매칭용) */
+function gc_name_similar($a, $b)
+{
+  $n1 = preg_replace('/\s+|[^가-힣a-z0-9]/iu', '', (string)$a);
+  $n2 = preg_replace('/\s+|[^가-힣a-z0-9]/iu', '', (string)$b);
+  if ($n1 === '' || $n2 === '') return 0;
+  if ($n1 === $n2) return 100;
+  if (mb_strpos($n1, $n2) !== false || mb_strpos($n2, $n1) !== false) return 80;
+  return round(similar_text($n1, $n2) * 100 / max(mb_strlen($n1), mb_strlen($n2)));
+}
+
+/* 5) 한 item을 우리 글에 매칭 후 '빈 칸만' 보강 */
+function gc_match_and_enrich_item($it, $radius_m = 1200, $dry_run = false)
+{
+  $name = trim($it['facltNm'] ?? '');
+  $tel  = trim($it['tel'] ?? '');
+  $hp   = trim($it['homepage'] ?? '');
+  $addr = trim(($it['addr1'] ?? '') . ' ' . ($it['addr2'] ?? ''));
+  $lng  = isset($it['mapX']) ? floatval($it['mapX']) : null; // 경도
+  $lat  = isset($it['mapY']) ? floatval($it['mapY']) : null; // 위도
+  $img  = $it['firstImageUrl'] ?? ($it['firstImageUrl2'] ?? '');
+  $sbrs = trim($it['sbrsCl'] ?? '');
+
+  if (!$name) return;
+
+  // 제목으로 1차 후보(최대 5개)
+  $maybe = get_posts(array(
+    'post_type'      => 'campground',
+    'posts_per_page' => 5,
+    's'              => $name,
+    'fields'         => 'ids',
+    'no_found_rows'  => true,
+  ));
+  if (!$maybe) return;
+
+  // 후보 중 가장 유사 + 반경 내
+  $selected = 0;
+  $bestScore = 0;
+  foreach ($maybe as $pid) {
+    $my_title = get_the_title($pid);
+    $score = gc_name_similar($name, $my_title);
+
+    if ($lat && $lng) {
+      $my_lat = get_post_meta($pid, 'lat', true);
+      $my_lng = get_post_meta($pid, 'lng', true);
+      if ($my_lat && $my_lng) {
+        $dist_m = gc_haversine_km(floatval($my_lat), floatval($my_lng), $lat, $lng) * 1000;
+        if ($dist_m > $radius_m) continue;
+      }
+    }
+    if ($score > $bestScore) {
+      $bestScore = $score;
+      $selected = $pid;
+    }
+  }
+  if (!$selected || $bestScore < 50) return; // 너무 다르면 보강하지 않음
+
+  if ($dry_run) return; // 드라이런은 저장 없이 종료
+
+  // 메타 보강(빈 칸만)
+  if ($tel && !get_post_meta($selected, 'phone', true))     update_post_meta($selected, 'phone', $tel);
+  if ($hp  && !get_post_meta($selected, 'homepage', true))  update_post_meta($selected, 'homepage', esc_url_raw($hp));
+  if ($sbrs && !get_post_meta($selected, 'features', true)) update_post_meta($selected, 'features', $sbrs);
+  if ($addr && !get_post_meta($selected, 'address_gc', true)) update_post_meta($selected, 'address_gc', $addr);
+
+  if ($img && !has_post_thumbnail($selected)) {
+    gc_set_featured_from_url($selected, $img, '고캠핑(한국관광공사)', '출처표시');
+  }
+}
+
+/* 6) WP-CLI: 전수 업데이트 (총 건수 자동 확인 → 전체 페이지 순회) */
+if (defined('WP_CLI') && WP_CLI) {
+  /**
+   * 고캠핑 전수 동기화
+   * 사용: wp gc sync-all [--rows=1000] [--start=1] [--end=N] [--radius=1200] [--dry-run]
+   * - rows: 페이지당 건수(기본 1000)
+   * - start/end: 페이지 범위를 수동 지정(없으면 totalCount 기준 자동 전체)
+   * - radius: 매칭 반경(m), 기본 1200m
+   * - dry-run: 저장 없이 매칭만 수행(테스트용)
+   */
+  WP_CLI::add_command('gc sync-all', function ($args, $assoc) {
+    $rows   = intval($assoc['rows'] ?? 1000);
+    $start  = isset($assoc['start']) ? max(1, intval($assoc['start'])) : null;
+    $end    = isset($assoc['end'])   ? max(1, intval($assoc['end']))   : null;
+    $radius = intval($assoc['radius'] ?? 1200);
+    $dry    = isset($assoc['dry-run']);
+
+    // 총건수 확인
+    list($items, $total, $err) = gc_fetch_based_list(1, $rows);
+    if ($err) WP_CLI::error("페이지 1 응답 오류: $err");
+    $total = intval($total);
+    if ($total <= 0) WP_CLI::error('totalCount=0');
+
+    $pages = (int)ceil($total / $rows);
+    $p_from = $start ?: 1;
+    $p_to   = $end   ?: $pages;
+
+    WP_CLI::log("총 {$total}건 / rows={$rows} → 총 페이지 {$pages} (실행: {$p_from}~{$p_to})");
+    // 1페이지는 이미 items가 있으니 재호출 없이 처리
+    for ($p = $p_from; $p <= $p_to; $p++) {
+      if ($p == 1 && $items) {
+        WP_CLI::log("페이지 1 처리 중 … (" . count($items) . "건)");
+        foreach ($items as $it) gc_match_and_enrich_item($it, $radius, $dry);
+      } else {
+        list($items2, $total2, $err2) = gc_fetch_based_list($p, $rows);
+        if ($err2 || !$items2) {
+          WP_CLI::warning("페이지 {$p} 응답 없음/오류");
+          continue;
+        }
+        WP_CLI::log("페이지 {$p} 처리 중 … (" . count($items2) . "건)");
+        foreach ($items2 as $it) gc_match_and_enrich_item($it, $radius, $dry);
+      }
+      WP_CLI::success("페이지 {$p} 완료");
+      usleep(120000); // 0.12s(선택): API 예의상 아주 짧은 간격
+    }
+    WP_CLI::success('전수 동기화 완료');
+  });
+}
+
+// 전화번호 포맷 → tel: 링크용(숫자만)
+function cg_tel_href($s)
+{
+  $d = preg_replace('/[^0-9+]/', '', (string)$s);
+  return $d ? 'tel:' . $d : '';
+}
+
+// 단일 캠핑장 본문에 연락처/홈페이지 블록 주입
+add_filter('the_content', function ($content) {
+  if (!is_singular('campground') || !in_the_loop() || !is_main_query()) return $content;
+
+  $pid  = get_the_ID();
+  $tel  = get_post_meta($pid, 'phone', true);
+  $home = get_post_meta($pid, 'homepage', true);
+
+  // 아무 값도 없으면 원본 그대로
+  if (!$tel && !$home) return $content;
+
+  // 블록 HTML(기존 톤 유지: badge/btn-ghost 활용)
+  ob_start(); ?>
+  <section class="cg-contact" aria-label="연락처">
+    <ul class="spec" style="list-style:none; padding:0; margin:8px 0;">
+      <?php if ($tel): ?>
+        <li style="display:flex; justify-content:space-between; padding:4px 0;">
+          <span class="k">전화</span>
+          <span class="v"><a href="<?php echo esc_attr(cg_tel_href($tel)); ?>" class="badge" aria-label="전화 걸기"><?php echo esc_html($tel); ?></a></span>
+        </li>
+      <?php endif; ?>
+      <?php if ($home): ?>
+        <li style="display:flex; justify-content:space-between; padding:4px 0;">
+          <span class="k">홈페이지</span>
+          <span class="v"><a href="<?php echo esc_url($home); ?>" class="badge" target="_blank" rel="noopener">바로가기</a></span>
+        </li>
+      <?php endif; ?>
+    </ul>
+  </section>
+<?php
+  $block = ob_get_clean();
+
+  // 기본: 본문 맨 위에 연락처 블록 삽입
+  return $block . $content;
+}, 11);
+
+add_action('wp_footer', function () {
+  if (!is_singular('campground')) return; ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var wrap = document.querySelector('.cg-detail .cg-map-wrap');
+      if (!wrap) return;
+      var bar = wrap.querySelector('.map-actionbar');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'map-actionbar';
+        bar.innerHTML = '<div class="left"></div><div class="right"></div>';
+        wrap.appendChild(bar);
+      }
+      var left = bar.querySelector('.left');
+      // 메타 값을 data-*로 전달하지 않았으니, 상세 블록에서 읽어와 링크 생성
+      var telEl = document.querySelector('.cg-contact .k')?.textContent === '전화' ?
+        document.querySelector('.cg-contact a[href^="tel:"]') : null;
+      var homeEl = document.querySelector('.cg-contact .k')?.textContent === '전화' ?
+        document.querySelector('.cg-contact').querySelector('a[target="_blank"]') :
+        document.querySelector('.cg-contact').querySelector('a[target="_blank"]');
+      // 전화 버튼
+      if (telEl) {
+        var telBtn = document.createElement('a');
+        telBtn.className = 'btn-ghost';
+        telBtn.href = telEl.getAttribute('href');
+        telBtn.textContent = '전화하기';
+        left.appendChild(telBtn);
+      }
+      // 홈페이지 버튼
+      var hp = document.querySelector('.cg-contact a[target="_blank"]');
+      if (hp) {
+        var homeBtn = document.createElement('a');
+        homeBtn.className = 'btn-ghost';
+        homeBtn.href = hp.href;
+        homeBtn.target = '_blank';
+        homeBtn.rel = 'noopener';
+        homeBtn.textContent = '홈페이지';
+        left.appendChild(homeBtn);
+      }
+    });
+  </script>
+<?php });
