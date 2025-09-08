@@ -235,6 +235,7 @@ $archive_link = get_post_type_archive_link('campground');
       <?php while (have_posts()) : the_post(); ?>
         <?php
         $pid    = get_the_ID();
+        $has_thumb = has_post_thumbnail($pid);
         $r_terms = get_the_terms($pid, 'region');
         $t_terms = get_the_terms($pid, 'camp_theme');
 
@@ -251,13 +252,37 @@ $archive_link = get_post_type_archive_link('campground');
           }
         }
         ?>
-        <article id="post-<?php the_ID(); ?>" <?php post_class('camp-item no-thumb'); ?>>
-          <h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-          <?php if ($badges): ?>
-            <div class="card-badges"><?php echo $badges; // 안전한 용도 
-                                      ?></div>
-          <?php endif; ?>
-        </article>
+        <?php if (!$has_thumb): ?>
+
+          <!-- 썸네일이 없을 때: 기존 코드 그대로 -->
+          <article id="post-<?php the_ID(); ?>" <?php post_class('camp-item no-thumb'); ?>>
+            <h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+            <?php if ($badges): ?>
+              <div class="card-badges"><?php echo $badges; ?></div>
+            <?php endif; ?>
+          </article>
+
+        <?php else: ?>
+
+          <!-- 썸네일이 있을 때: 같은 카드 디자인 + 내부만 2열 -->
+          <article id="post-<?php the_ID(); ?>" <?php post_class('camp-item has-thumb'); ?>>
+
+            <div class="cg-row">
+              <a class="cg-thumb" href="<?php the_permalink(); ?>" aria-label="<?php the_title_attribute(); ?>">
+                <?php the_post_thumbnail('medium_large', ['loading' => 'lazy', 'decoding' => 'async']); ?>
+              </a>
+
+              <div class="cg-body">
+                <h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+                <?php if ($badges): ?>
+                  <div class="card-badges"><?php echo $badges; ?></div>
+                <?php endif; ?>
+              </div>
+            </div>
+
+          </article>
+
+        <?php endif; ?>
       <?php endwhile; ?>
     </div>
 

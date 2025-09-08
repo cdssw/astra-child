@@ -2401,3 +2401,426 @@ body.search nav.pagination{
   margin-top: 12px !important;      /* 페이징 위쪽 간격 */
   margin-bottom: 12px !important;   /* 하단도 살짝 여유 */
 }
+
+
+/* 본문 상단 히어로 통일: 16:9 비율, 중앙 크롭, 최대 폭 제한 */
+.entry-content .cg-hero{
+  max-width: 980px;      /* 본문 폭 안에서만 */
+  margin: 0 auto 16px;
+  aspect-ratio: 16 / 9;  /* 고정 비율 */
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0f172a;   /* 어두운 배경(로딩 시 깜빡임 최소화) */
+  box-shadow: 0 6px 24px rgba(0,0,0,.20);
+}
+.entry-content .cg-hero img{
+  width: 100%;
+  height: 100% !important;  /* 기존 inline height:auto 덮어쓰기 */
+  object-fit: cover;         /* 중앙 기준으로 예쁘게 자르기 */
+  display: block;
+  border-radius: 12px;
+}
+
+/* 모바일에서는 4:3으로 살짝 높게 */
+@media (max-width: 480px){
+  .entry-content .cg-hero{ aspect-ratio: 4 / 3; }
+}
+
+/* 아카이브 카드 */
+.cg-card{ 
+  display: grid; grid-template-columns: 220px 1fr; gap: 14px;
+  padding: 14px; border: 1px solid rgba(148,163,184,.24);
+  background: rgba(15,23,42,.35);
+  border-radius: 12px; overflow: hidden;
+}
+.cg-card + .cg-card{ margin-top: 14px; }
+
+/* 썸네일(이미지 있는 글만 노출) */
+.cg-card-thumb{
+  aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden; position: relative;
+  background: #0b1324;
+}
+.cg-card-thumb img{
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .28s ease;
+}
+.cg-card-thumb:hover img{ transform: scale(1.035); }
+
+/* 텍스트 영역 */
+.cg-card-title{ margin: 2px 0 8px; font-size: 1.025rem; line-height: 1.35; }
+.cg-card-title a{ color: #e5efff; text-decoration: none; }
+.cg-card-title a:hover{ text-decoration: underline; }
+
+/* 이미지가 없는 글은 단일 컬럼으로 */
+.cg-card.no-thumb{ grid-template-columns: 1fr; }
+
+/* 모바일 그리드 */
+@media (max-width: 640px){
+  .cg-card{ grid-template-columns: 1fr; }
+  .cg-card-thumb{ margin-bottom: 10px; }
+}
+
+
+/* 혹시 이전에 article에 flex/grid를 줬었다면 리셋(안 주셨으면 영향 없음) */
+@media (min-width:1024px){
+  .post-type-archive-campground article.camp-item.has-thumb{ display:block !important; }
+}
+
+/* 썸네일 공통 모양(모바일/세로 기본) */
+.camp-item .cg-list-thumb{
+  display:block;
+  width:100%;
+  aspect-ratio: 4 / 3;
+  overflow:hidden;
+  border-radius:10px;
+  background:#0b1324;
+  margin:0 0 10px; /* 제목과 간격 */
+}
+.camp-item .cg-list-thumb img{
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+  transition:transform .22s ease;
+}
+.camp-item .cg-list-thumb:hover img{ transform:scale(1.03); }
+
+/* 내부 래퍼: 기본은 단일(모바일) */
+.camp-item .cg-list-row{ display:block; }
+
+/* 데스크톱에서만 2열(좌:썸네일, 우:내용) — article은 그대로 */
+@media (min-width:1024px){
+  .post-type-archive-campground .camp-item .cg-list-row{
+    display:grid;
+    grid-template-columns: 240px 1fr;  /* 좌측 고정 240px + 우측 가변 */
+    gap:16px;
+    align-items:flex-start;
+  }
+  .post-type-archive-campground .camp-item.no-thumb .cg-list-row{
+    display:block;                     /* 이미지 없으면 기존 단일 레이아웃 */
+  }
+  .post-type-archive-campground .camp-item .cg-list-thumb{ margin:0; }
+  .post-type-archive-campground .camp-item .cg-list-body{ min-width:0; }
+  .post-type-archive-campground .camp-item .cg-list-body .entry-title{ margin-top:2px; }
+}
+
+/* 초광폭에서 썸네일 조금 키우고 싶으면 (선택) */
+@media (min-width:1440px){
+  .post-type-archive-campground .camp-item .cg-list-row{
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+/* 공통: 썸네일 모양(모바일/세로 기본) */
+.camp-item .cg-thumb{
+  display:block;
+  width:100%;
+  aspect-ratio: 4 / 3;
+  overflow:hidden;
+  border-radius:12px;
+  background:#0b1324;
+  margin:0 0 10px;            /* 모바일: 제목과 간격 */
+}
+.camp-item .cg-thumb img{
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+  transition:transform .22s ease;
+}
+.camp-item .cg-thumb:hover img{ transform:scale(1.03); }
+
+/* 내부 래퍼: 기본은 단일(모바일) */
+.camp-item .cg-row{ display:block; }
+
+/* 데스크톱에서만 좌:썸네일 / 우:텍스트 */
+@media (min-width:1024px){
+  .post-type-archive-campground .camp-item.has-thumb .cg-row{
+    display:flex; gap:16px; align-items:flex-start;
+  }
+  .post-type-archive-campground .camp-item.has-thumb .cg-thumb{
+    flex:0 0 240px; width:240px; margin:0; aspect-ratio:4/3;
+  }
+  .post-type-archive-campground .camp-item.has-thumb .cg-body{
+    flex:1 1 auto; min-width:0;
+  }
+  .post-type-archive-campground .camp-item.has-thumb .cg-body .entry-title{ margin-top:2px; }
+}
+
+/* 초광폭에서 썸네일 폭 살짝 업(선택) */
+@media (min-width:1440px){
+  .post-type-archive-campground .camp-item.has-thumb .cg-thumb{ flex-basis:280px; width:280px; }
+}
+
+:root{ --panel: #0e1624; } /* 필요 시 원하는 색으로 변경 */
+
+/* 1) 공통 톤(아카이브+단일) — border/그림자 없이 카드 기본 스타일만 */
+.cg-skin article.ast-article-post,
+.cg-skin article.ast-article-single,
+.cg-skin article.camp-item{
+  background: var(--panel) !important;
+  border: 0;                       /* 공통: 테두리 없음 */
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: none;                 /* 공통: 그림자 없음 */
+  color: #e5e7eb;
+  box-sizing: border-box;
+  background-clip: padding-box;
+}
+
+/* 2) 목록(아카이브)에서만 border/그림자 적용 */
+.cg-skin.post-type-archive-campground article.ast-article-post,
+.cg-skin.post-type-archive-campground article.camp-item{
+  border: 1px solid #2b3b53 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.28) !important;
+}
+
+/* 3) 단일 본문에서는 border/그림자 확실히 제거(안전망) */
+.cg-skin.single-campground article.ast-article-single{
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* 4) 제목 링크 스타일 — 썸네일 유무와 관계없이 동일 적용 */
+.post-type-archive-campground .camp-item:is(.no-thumb, .has-thumb) .entry-title a{
+  color: #e5efff;
+  font-weight: 700;
+  text-decoration: none;
+}
+.post-type-archive-campground .camp-item:is(.no-thumb, .has-thumb) .entry-title a:hover{
+  color: #fff;
+  text-decoration: underline;
+}
+.post-type-archive-campground .camp-item:is(.no-thumb, .has-thumb) .entry-title a:visited{
+  color: #cfd9ff;
+}
+
+/* 캠핑장 목록: 모든 카드(두 번째부터) 위에 12px 간격 */
+.post-type-archive-campground .ast-row > article.camp-item + article.camp-item {
+  margin-top: 12px;
+}
+
+/* DOM 구조가 달라도 동작하도록 보조 셀렉터(옵션) */
+.post-type-archive-campground article.camp-item:not(:first-of-type) {
+  margin-top: 12px;
+}
+
+/* 테마 기본 하단 간격이 있어 두 겹이 된다면 한 줄로 정리(옵션) */
+/* .post-type-archive-campground article.camp-item { margin-bottom: 0; } */
+
+/* 조절값: 썸네일 폭/높이, 간격, 행(카드) 목표 높이 */
+:root{
+  --cg-thumb-w: 120px;  /* 100~140px 권장 */
+  --cg-thumb-h: 80px;   /* 70~90px 권장(4:3 느낌) */
+  --cg-gap: 12px;
+  --cg-row-h: 100px;    /* no-thumb 카드와 비슷한 높이(≈ 100~106px) */
+}
+
+/* 공통(기존 스타일 보존): 모바일에서는 변경 최소화 */
+.post-type-archive-campground .camp-item .cg-thumb{
+  display:block;
+  width:100%;
+  aspect-ratio: 4 / 3;
+  overflow:hidden;
+  border-radius:12px;
+  background:#0b1324;
+  margin:0 0 10px;
+}
+.post-type-archive-campground .camp-item .cg-thumb img{
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+
+/* 데스크톱에서만: 썸네일 작게 고정(좌측), 텍스트 우측 정렬 */
+@media (min-width: 1024px){
+  /* 내부 행을 가로 정렬로 강제 (기존 grid/flex 충돌 방지 위해 !important) */
+  .post-type-archive-campground .camp-item.has-thumb .cg-row{
+    display:flex !important;
+    align-items:center;
+    gap: var(--cg-gap);
+  }
+
+  /* 썸네일 고정 크기(작게) → 카드 높이 축소 */
+  .post-type-archive-campground .camp-item.has-thumb .cg-thumb{
+    flex: 0 0 var(--cg-thumb-w);
+    width: var(--cg-thumb-w);
+    height: var(--cg-thumb-h);
+    aspect-ratio: auto !important; /* 이전 aspect-ratio 덮기 */
+    margin: 0;                     /* 가로 배치에선 위 여백 제거 */
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .post-type-archive-campground .camp-item.has-thumb .cg-thumb img{
+    height: 100% !important; /* 기존 height:auto 덮어 고정 박스에 맞춤 */
+    object-fit: cover;
+  }
+
+  /* 우측 텍스트 영역 */
+  .post-type-archive-campground .camp-item.has-thumb .cg-body{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .post-type-archive-campground .camp-item.has-thumb .entry-title{ margin:0 0 4px; }
+
+  /* 제목 2줄까지만(높이 폭주 방지, 선택) */
+  .post-type-archive-campground .camp-item.has-thumb .entry-title a{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* 카드 행 목표 높이(전체 카드에 동일하게 최소 높이 지정) */
+  .post-type-archive-campground article.camp-item{
+    min-height: var(--cg-row-h);
+  }
+}
+
+/* 목록 전체 카드 간 간격 12px */
+.post-type-archive-campground .ast-row > article.camp-item + article.camp-item{
+  margin-top: 12px;
+}
+
+/* 조절값: 필요 시 숫자만 바꾸세요 */
+:root{
+  --cg-thumb-w: 120px;  /* 100~140px 권장 */
+  --cg-thumb-h: 80px;   /* 70~90px 권장 (가로:세로 ≈ 3:2 또는 4:3 느낌) */
+  --cg-gap: 12px;
+  --cg-row-h: 100px;    /* no-thumb 카드와 비슷한 높이 */
+}
+
+/* 1) 목록 카드 간 간격(두 번째부터) */
+.post-type-archive-campground .ast-row > article.camp-item + article.camp-item{
+  margin-top: 12px;
+}
+
+/* 2) 썸네일 있는 카드: 항상 좌측 고정 크기 + 우측 본문 (모든 화면에서 동일) */
+.post-type-archive-campground .camp-item.has-thumb .cg-row{
+  display: flex !important;
+  align-items: center;
+  gap: var(--cg-gap);
+  flex-wrap: nowrap;
+}
+
+/* 이전에 넣었던 aspect-ratio/width:100%를 확실히 무효화 */
+.post-type-archive-campground .camp-item.has-thumb .cg-thumb{
+  aspect-ratio: initial !important;
+  width: var(--cg-thumb-w) !important;
+  height: var(--cg-thumb-h) !important;
+  flex: 0 0 var(--cg-thumb-w);
+  margin: 0;                 /* 가로 배치이므로 상단 여백 제거 */
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0b1324;
+}
+.post-type-archive-campground .camp-item.has-thumb .cg-thumb img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  display: block;
+}
+
+/* cg-list-thumb 네이밍을 쓰는 카드도 함께 커버(있다면) */
+.post-type-archive-campground .camp-item.has-thumb .cg-list-thumb{
+  aspect-ratio: initial !important;
+  width: var(--cg-thumb-w) !important;
+  height: var(--cg-thumb-h) !important;
+  flex: 0 0 var(--cg-thumb-w);
+  margin: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #0b1324;
+}
+.post-type-archive-campground .camp-item.has-thumb .cg-list-thumb img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  display: block;
+}
+
+/* 본문(우측) 영역이 제대로 줄바꿈되도록 */
+.post-type-archive-campground .camp-item.has-thumb .cg-body{ flex: 1 1 auto; min-width: 0; }
+
+/* 3) 모든 카드의 최소 행 높이 통일 */
+.post-type-archive-campground article.camp-item{
+  min-height: var(--cg-row-h);
+}
+
+/* 4) 제목/배지로 인해 높이가 불필요하게 커지는 것 방지 */
+.post-type-archive-campground .camp-item .entry-title{ margin: 0 0 4px; }
+.post-type-archive-campground .camp-item .entry-title a{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;         /* 제목 최대 2줄 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-type-archive-campground .camp-item .card-badges{
+  white-space: nowrap;            /* 배지 한 줄 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 5) 썸네일 없는 카드(no-thumb)와 톤을 맞추되, 테두리는 목록에서만 */
+.cg-skin.post-type-archive-campground article.camp-item{
+  background: var(--panel, #0e1624);
+  border: 1px solid #2b3b53;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.28);
+  color: #e5e7eb;
+  box-sizing: border-box;
+}
+
+/* 조절값(필요 시 숫자만 변경) */
+:root{
+  --hero-w: 760px;  /* PC에서 고정 가로 (예: 720~840px 권장) */
+  --hero-h: 428px;  /* PC에서 고정 세로 (16:9 기준: 가로×0.5625) */
+}
+
+@media (min-width: 1024px){
+  /* 히어로 프레임: 가로·세로 고정 + 가운데 정렬 */
+  .single-campground .entry-content .cg-hero{
+    width: var(--hero-w);
+    height: var(--hero-h);
+    max-width: calc(100% - 40px); /* 아주 좁은 뷰에서 좌우 여백 확보용 안전장치 */
+    margin: 0 auto 16px;          /* 가운데 정렬 + 하단 간격 */
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0f172a;
+    box-shadow: 0 6px 24px rgba(0,0,0,.20);
+    display: block;
+  }
+
+  /* 이미지: 박스에 정확히 맞춤(크롭) */
+  .single-campground .entry-content .cg-hero img{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  /* 테마가 alignwide/alignfull을 강제할 경우의 방지용 오버라이드 */
+  .single-campground .entry-content .cg-hero.alignwide,
+  .single-campground .entry-content .cg-hero.alignfull{
+    width: var(--hero-w) !important;
+    height: var(--hero-h) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+@media (min-width: 1024px){
+  .single-campground .entry-content .cg-hero{
+    max-width: 760px;      /* 최대 가로만 제한 */
+    aspect-ratio: 16 / 9;  /* 비율 고정 */
+    margin: 0 auto 16px;
+    border-radius: 12px; overflow: hidden; background:#0f172a;
+  }
+  .single-campground .entry-content .cg-hero img{
+    width: 100% !important; height: 100% !important; object-fit: cover; display: block;
+  }
+}
+
+.single-campground .entry-content { text-align: initial; }
+.single-campground .entry-content .cg-hero { margin-left: auto; margin-right: auto; }
+
+.cg-skin article.ast-article-single {
+  background: none !important;
+}

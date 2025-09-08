@@ -1035,18 +1035,64 @@ function cg_set_featured_from_url_strict($post_id, $url)
 }
 
 // 본문 상단 히어로: 대표 이미지 우선, 외부 URL은 절대경로일 때만 사용
-function cg_build_hero_img_html($post_id)
-{
-  if (has_post_thumbnail($post_id)) {
-    $src = wp_get_attachment_image_url(get_post_thumbnail_id($post_id), 'large');
-    if ($src) return '<figure class="cg-hero" style="margin:0 0 16px 0;"><img src="' . esc_url($src) . '" alt="' . esc_attr(get_the_title($post_id)) . '" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;"></figure>';
+if (!function_exists('cg_build_hero_img_html')) {
+  function cg_build_hero_img_html($post_id)
+  {
+    if (!has_post_thumbnail($post_id)) return '';
+    $aid = get_post_thumbnail_id($post_id);
+    $src = wp_get_attachment_image_url($aid, 'large');
+    if (!$src) $src = wp_get_attachment_image_url($aid, 'medium_large');
+    if (!$src) $src = wp_get_attachment_image_url($aid, 'full');
+    if (!$src) return '';
+    $alt = esc_attr(get_the_title($post_id));
+    return '<figure class="cg-hero"><img class="cg-hero-img" src="' . esc_url($src) . '" alt="' . $alt . '" loading="lazy" decoding="async"></figure>';
   }
-  $ext = trim((string)get_post_meta($post_id, '_image_original', true));
-  if ($ext !== '' && preg_match('#^https?://#i', $ext)) {
-    // 브라우저 직접 호출은 안티핫링크에 막힐 수 있으므로, 여기서는 미리 대표 이미지로 내려받는 걸 권장
-    return ''; // 히어로에서는 직접 외부 URL을 쓰지 않음(깨짐 방지)
-  }
-  return '';
+}
+
+// WP-CLI: 본문 정규화(히어로만 정리)
+if (defined('WP_CLI') && WP_CLI) {
+  WP_CLI::add_command('cg normalize', function ($args, $assoc) {
+    // 대상 ID 수집
+    if (!empty($assoc['ids'])) {
+      $ids = array_map('intval', explode(',', $assoc['ids']));
+    } else {
+      if (empty($assoc['all'])) WP_CLI::error('사용법: --all 또는 --ids=1,2');
+      $ids = get_posts(['post_type' => 'campground', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids']);
+    }
+
+    $updated = 0;
+    $skipped = 0;
+    foreach ($ids as $pid) {
+      $html = get_post_field('post_content', $pid);
+
+      // 1) 예전 히어로(인라인 포함)를 통으로 제거
+      $removed = 0;
+      $html = preg_replace('#<figure[^>]*class="[^"]*cg-hero[^"]*"[^>]*>.*?</figure>#is', '', $html, -1, $removed);
+
+      // 2) 본문이 이미지/figure로 시작하면 새 히어로는 붙이지 않음
+      $starts_with_media = (bool)preg_match('#^\s*<(figure|img)\b#i', ltrim($html));
+
+      // 3) 새 히어로(인라인 없는 버전) 생성
+      $hero = '';
+      if (!$starts_with_media) {
+        $hero = cg_build_hero_img_html($pid); // 반드시 함수 호출
+      }
+
+      // 4) 변경 없으면 스킵
+      if (!$removed && $hero === '') {
+        $skipped++;
+        continue;
+      }
+
+      // 5) 저장
+      $new = ($hero ? $hero . "\n\n" : '') . $html;
+      $res = wp_update_post(['ID' => $pid, 'post_content' => $new], true);
+      if (!is_wp_error($res)) $updated++;
+
+      usleep(60000);
+    }
+    WP_CLI::success("정규화: 갱신 {$updated}, 건너뜀 {$skipped}");
+  });
 }
 
 // 절대 URL 판별
@@ -1259,3 +1305,11 @@ if (defined('WP_CLI') && WP_CLI) {
     WP_CLI::success("정규화: 갱신 {$updated}, 건너뜀 {$skipped}");
   });
 }
+
+// 캠핑장 목록/단일 화면에만 스킨 클래스 부여
+add_filter('body_class', function ($classes) {
+  if (is_post_type_archive('campground') || is_singular('campground')) {
+    $classes[] = 'cg-skin';
+  }
+  return $classes;
+});
